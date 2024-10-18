@@ -9,14 +9,14 @@ website:
     logo: imglib2-logo-header.png
     right:
       - icon: github
-        href: https://github.com/
+        href: https://github.com/saalfeldlab/i2k2024-lazy-workshop
       - icon: mastodon
         href: https://fosstodon.org/@imglib2
       - icon: rss
         href: index.xml
   open-graph: true
-  repo-url: https://github.com/imglib/imglib2-blog
-  site-url: https://imglib.github.io/imglib2-blog
+  repo-url: https://github.com/saalfeldlab/i2k2024-lazy-workshop/
+  site-url: https://saalfeldlab.github.io/i2k2024-lazy-workshop/
 format:
   html:
     theme: cosmo
