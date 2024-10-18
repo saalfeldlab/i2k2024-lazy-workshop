@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark</title>
+<link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/</link>
+<atom:link href="https://saalfeldlab.github.io/i2k2024-lazy-workshop/index.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<image>
+<url>https://saalfeldlab.github.io/i2k2024-lazy-workshop/imglib2-logo.png</url>
+<title>Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark</title>
+<link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/</link>
+</image>
+<generator>quarto-99.9.9</generator>
+<lastBuildDate>Thu, 17 Oct 2024 06:00:00 GMT</lastBuildDate>
+<item>
+  <title>How to work with the N5 API and ImgLib2?</title>
+  <dc:creator>Stephan Saalfeld</dc:creator>
+  <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-n5/2022-09-27-n5-imglib2.html</link>
+  <description><![CDATA[ Read and write ImgLib2 data with the N5 API. ]]></description>
+  <category>imglib2</category>
+  <category>java</category>
+  <category>n5</category>
+  <category>hdf5</category>
+  <category>zarr</category>
+  <category>jupyter</category>
+  <category>notebook</category>
+  <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-n5/2022-09-27-n5-imglib2.html</guid>
+  <pubDate>Thu, 17 Oct 2024 06:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Setup instructions</title>
+  <dc:creator>Stephan Saalfeld</dc:creator>
+  <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/01-setup.html</link>
+  <description><![CDATA[ How to get started … ]]></description>
+  <category>conda</category>
+  <category>java</category>
+  <category>ijava</category>
+  <category>jupyter</category>
+  <category>quarto</category>
+  <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/01-setup.html</guid>
+  <pubDate>Thu, 17 Oct 2024 05:00:00 GMT</pubDate>
+</item>
+</channel>
+</rss>
