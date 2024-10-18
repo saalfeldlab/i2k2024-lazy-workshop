@@ -1,0 +1,27 @@
+project:
+  type: website
+
+website:
+  title: "Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark"
+  image: imglib2-logo.png
+  favicon: favicon.ico
+  navbar:
+    logo: imglib2-logo-header.png
+    right:
+      - icon: github
+        href: https://github.com/
+      - icon: mastodon
+        href: https://fosstodon.org/@imglib2
+      - icon: rss
+        href: index.xml
+  open-graph: true
+  repo-url: https://github.com/imglib/imglib2-blog
+  site-url: https://imglib.github.io/imglib2-blog
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    code-fold: show
+    code-overflow: wrap
+    code-tools:
+      source: repo
