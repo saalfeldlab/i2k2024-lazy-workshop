@@ -1,6 +1,6 @@
 # I2K2024 workshop - Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark
 
-https://saalfeldlab.github.io/ii2k2024-lazy-workshop/
+https://saalfeldlab.github.io/i2k2024-lazy-workshop/
 
 ## How to contribute
 
