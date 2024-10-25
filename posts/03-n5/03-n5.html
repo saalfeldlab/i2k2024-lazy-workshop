@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2024-10-17">
 <meta name="description" content="Read and write ImgLib2 data with the N5 API.">
 
-<title>Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark – How to work with the N5 API and ImgLib2?</title>
+<title>Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark – N5 API</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -107,9 +107,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <link rel="stylesheet" href="../../styles.css">
-<meta property="og:title" content="Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark - How to work with the N5 API and ImgLib2?">
+<meta property="og:title" content="Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark - N5 API">
 <meta property="og:description" content="Read and write ImgLib2 data with the N5 API.">
-<meta property="og:image" content="https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-n5/imglib2-logo.png">
+<meta property="og:image" content="https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/03-n5/imglib2-logo.png">
 <meta property="og:site_name" content="Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark">
 </head>
 
@@ -159,7 +159,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <div class="quarto-title-block"><div><h1 class="title">How to work with the N5 API and ImgLib2?</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button" data-quarto-source-url="https://github.com/saalfeldlab/i2k2024-lazy-workshop/blob/main/posts/02-n5/02-n5.ipynb">View Source</a></li></ul></div></div>
+      <div class="quarto-title-block"><div><h1 class="title">N5 API</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button" data-quarto-source-url="https://github.com/saalfeldlab/i2k2024-lazy-workshop/blob/main/posts/03-n5/03-n5.ipynb">View Source</a></li></ul></div></div>
                   <div>
         <div class="description">
           Read and write ImgLib2 data with the N5 API.
@@ -285,7 +285,7 @@ SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further detail
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 <figure class="figure">
-<p><img src="02-n5_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="03-n5_files/figure-html/cell-4-output-2.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -310,21 +310,21 @@ SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further detail
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02-n5_files/figure-html/cell-5-output-1.jpeg" class="img-fluid figure-img"></p>
+<p><img src="03-n5_files/figure-html/cell-5-output-1.jpeg" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02-n5_files/figure-html/cell-5-output-2.jpeg" class="img-fluid figure-img"></p>
+<p><img src="03-n5_files/figure-html/cell-5-output-2.jpeg" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02-n5_files/figure-html/cell-5-output-3.jpeg" class="img-fluid figure-img"></p>
+<p><img src="03-n5_files/figure-html/cell-5-output-3.jpeg" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -469,21 +469,21 @@ SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further detail
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02-n5_files/figure-html/cell-8-output-1.jpeg" class="img-fluid figure-img"></p>
+<p><img src="03-n5_files/figure-html/cell-8-output-1.jpeg" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02-n5_files/figure-html/cell-8-output-2.jpeg" class="img-fluid figure-img"></p>
+<p><img src="03-n5_files/figure-html/cell-8-output-2.jpeg" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02-n5_files/figure-html/cell-8-output-3.jpeg" class="img-fluid figure-img"></p>
+<p><img src="03-n5_files/figure-html/cell-8-output-3.jpeg" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>

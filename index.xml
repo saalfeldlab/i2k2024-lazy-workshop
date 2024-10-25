@@ -15,11 +15,50 @@
 <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/</link>
 </image>
 <generator>quarto-99.9.9</generator>
-<lastBuildDate>Thu, 17 Oct 2024 06:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 17 Oct 2024 10:00:00 GMT</lastBuildDate>
 <item>
-  <title>How to work with the N5 API and ImgLib2?</title>
+  <title>Lazy processing with ImgLib2 and Spark</title>
   <dc:creator>Stephan Saalfeld</dc:creator>
-  <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-n5/2022-09-27-n5-imglib2.html</link>
+  <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/06-spark/06-spark.html</link>
+  <description><![CDATA[ Working around (lack of) serialization. ]]></description>
+  <category>imglib2</category>
+  <category>jupyter</category>
+  <category>notebook</category>
+  <category>spark</category>
+  <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/06-spark/06-spark.html</guid>
+  <pubDate>Thu, 17 Oct 2024 10:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Using the ImgLib2 blocks API</title>
+  <dc:creator>Tobias Pietzsch</dc:creator>
+  <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/05-blocks/05-blocks.html</link>
+  <description><![CDATA[ Using the ImgLib2 blocks API for downsampling and convolution ]]></description>
+  <category>imglib2</category>
+  <category>java</category>
+  <category>n5</category>
+  <category>jupyter</category>
+  <category>notebook</category>
+  <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/05-blocks/05-blocks.html</guid>
+  <pubDate>Thu, 17 Oct 2024 09:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Lazy image processing with ImgLib2 cache</title>
+  <dc:creator>Stephan Saalfeld</dc:creator>
+  <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/04-cache/04-cache.html</link>
+  <description><![CDATA[ … by defining the processing operations over cells. ]]></description>
+  <category>imglib2</category>
+  <category>jupyter</category>
+  <category>notebook</category>
+  <category>cache</category>
+  <category>lazy</category>
+  <category>cell</category>
+  <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/04-cache/04-cache.html</guid>
+  <pubDate>Thu, 17 Oct 2024 08:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>N5 API</title>
+  <dc:creator>Stephan Saalfeld</dc:creator>
+  <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/03-n5/03-n5.html</link>
   <description><![CDATA[ Read and write ImgLib2 data with the N5 API. ]]></description>
   <category>imglib2</category>
   <category>java</category>
@@ -28,7 +67,18 @@
   <category>zarr</category>
   <category>jupyter</category>
   <category>notebook</category>
-  <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-n5/2022-09-27-n5-imglib2.html</guid>
+  <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/03-n5/03-n5.html</guid>
+  <pubDate>Thu, 17 Oct 2024 07:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>ImgLib2 is lazy</title>
+  <dc:creator>Stephan Saalfeld</dc:creator>
+  <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-lazy-imglib2/02-lazy-imglib2.html</link>
+  <description><![CDATA[ … very, very lazy, like … everywhere! ]]></description>
+  <category>imglib2</category>
+  <category>jupyter</category>
+  <category>notebook</category>
+  <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-lazy-imglib2/02-lazy-imglib2.html</guid>
   <pubDate>Thu, 17 Oct 2024 06:00:00 GMT</pubDate>
 </item>
 <item>
@@ -43,6 +93,13 @@
   <category>quarto</category>
   <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/01-setup.html</guid>
   <pubDate>Thu, 17 Oct 2024 05:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Procedurally generated image</title>
+  <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-lazy-imglib2/juliaset.html</link>
+  <description><![CDATA[ continuous (defined at every real coordinate) and unbounded. ]]></description>
+  <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-lazy-imglib2/juliaset.html</guid>
+  <pubDate>Fri, 25 Oct 2024 00:54:32 GMT</pubDate>
 </item>
 </channel>
 </rss>

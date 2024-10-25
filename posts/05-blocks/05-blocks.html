@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-99.9.9">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Tobias Pietzsch">
+<meta name="dcterms.date" content="2024-10-17">
+<meta name="description" content="Using the ImgLib2 blocks API for downsampling and convolution">
+
+<title>Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark – Using the ImgLib2 blocks API</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../favicon.ico" rel="icon">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark - Using the ImgLib2 blocks API">
+<meta property="og:description" content="Using the ImgLib2 blocks API for downsampling and convolution">
+<meta property="og:image" content="https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/05-blocks/imglib2-logo.png">
+<meta property="og:site_name" content="Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../imglib2-logo-header.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/saalfeldlab/i2k2024-lazy-workshop"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://fosstodon.org/@imglib2"> <i class="bi bi-mastodon" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <div class="quarto-title-block"><div><h1 class="title">Using the ImgLib2 blocks API</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button" data-quarto-source-url="https://github.com/saalfeldlab/i2k2024-lazy-workshop/blob/main/posts/05-blocks/05-blocks.ipynb">View Source</a></li></ul></div></div>
+                  <div>
+        <div class="description">
+          Using the ImgLib2 blocks API for downsampling and convolution
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">imglib2</div>
+                <div class="quarto-category">java</div>
+                <div class="quarto-category">n5</div>
+                <div class="quarto-category">jupyter</div>
+                <div class="quarto-category">notebook</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Tobias Pietzsch </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">October 17, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="setting-up" class="level2">
+<h2 class="anchored" data-anchor-id="setting-up">Setting up …</h2>
+<p>As usual, we start by importing dependencies and registering <code>RandomAcccessibleInterval</code> notebook renderer.</p>
+<div id="41289f4c-49aa-46c1-8852-6063436a69f4" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>mavenRepo scijava<span class="op">.</span><span class="fu">public</span> https<span class="op">:</span><span class="co">//maven.scijava.org/content/groups/public</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">-</span>algorithm<span class="op">:</span><span class="fl">0.17.1</span><span class="op">-</span>SNAPSHOT</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">-</span>ij<span class="op">:</span><span class="fl">2.0.3</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven sc<span class="op">.</span><span class="fu">fiji</span><span class="op">:</span>bigdataviewer<span class="op">-</span>core<span class="op">:</span><span class="fl">10.6.2</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven org<span class="op">.</span><span class="fu">janelia</span><span class="op">.</span><span class="fu">saalfeldlab</span><span class="op">:</span>n5<span class="op">:</span><span class="fl">3.3.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="8b750ef6-1870-48b0-8939-de7cb4a66a13" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">io</span><span class="op">.</span><span class="im">github</span><span class="op">.</span><span class="im">spencerpark</span><span class="op">.</span><span class="im">jupyter</span><span class="op">.</span><span class="im">kernel</span><span class="op">.</span><span class="im">display</span><span class="op">.</span><span class="im">common</span><span class="op">.*;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">io</span><span class="op">.</span><span class="im">github</span><span class="op">.</span><span class="im">spencerpark</span><span class="op">.</span><span class="im">jupyter</span><span class="op">.</span><span class="im">kernel</span><span class="op">.</span><span class="im">display</span><span class="op">.</span><span class="im">mime</span><span class="op">.*;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">img</span><span class="op">.</span><span class="im">display</span><span class="op">.</span><span class="im">imagej</span><span class="op">.</span><span class="im">ImageJFunctions</span><span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">RandomAccessibleInterval</span><span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">getKernelInstance</span><span class="op">().</span><span class="fu">getRenderer</span><span class="op">().</span><span class="fu">createRegistration</span><span class="op">(</span>RandomAccessibleInterval<span class="op">.</span><span class="fu">class</span><span class="op">)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">preferring</span><span class="op">(</span>MIMEType<span class="op">.</span><span class="fu">IMAGE_PNG</span><span class="op">)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">supporting</span><span class="op">(</span>MIMEType<span class="op">.</span><span class="fu">IMAGE_JPEG</span><span class="op">,</span> MIMEType<span class="op">.</span><span class="fu">IMAGE_GIF</span><span class="op">)</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">register</span><span class="op">((</span>rai<span class="op">,</span> context<span class="op">)</span> <span class="op">-&gt;</span> <span class="bu">Image</span><span class="op">.</span><span class="fu">renderImage</span><span class="op">(</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        ImageJFunctions<span class="op">.</span><span class="fu">wrap</span><span class="op">(</span>rai<span class="op">,</span> rai<span class="op">.</span><span class="fu">toString</span><span class="op">()).</span><span class="fu">getBufferedImage</span><span class="op">(),</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        context<span class="op">));</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>The ImgLib2 “<strong>blocks</strong>” API is about performing computations on blocks of (image) data more efficiently than going pixel-by-pixel using <code>RandomAccess</code>, <code>Type</code>, etc.</p>
+<p>A fundamental limitation of this framework is that it <em>only works with <code>NativeType</code>, and (so far) only with those that map 1:1 to primitives</em>. For example, <code>UnsignedByteType</code> works, but <code>ComplexDoubleType</code> does not.</p>
+<section id="idea" class="level3">
+<h3 class="anchored" data-anchor-id="idea">Idea</h3>
+<p>The idea is simple:</p>
+<ol type="1">
+<li><p>Efficiently extract a region from a <code>RandomAccessible&lt;T&gt;</code> into a flat primitive array.</p></li>
+<li><p>Implement small, efficient functions that compute the output flat primitive array from the input flat primitive array. (Importantly, these functions don’t do anything “clever”: out-of-bounds extension is handled outside; if the input data requires padding, assume the input array is padded. No per-element type checks, etc. If the function should work on <code>float[]</code> and <code>int[]</code> inputs, we have two versions.)</p></li>
+<li><p>Wrap and assemble the computed flat primitive arrays back into <code>RandomAccessibleInterval</code>.</p></li>
+</ol>
+<p>We also provide some infrastructure for chaining intermediate ‘block’ operations.</p>
+</section>
+<section id="outline" class="level3">
+<h3 class="anchored" data-anchor-id="outline">Outline</h3>
+<p>There are two levels of API:</p>
+<ol type="1">
+<li>The low-level <code>PrimitiveBlocks</code> and <code>BlockProcessor</code> deal with primitive java arrays.</li>
+<li>The high-level <code>BlockSupplier</code> and <code>UnaryBlockOperator</code> wrap this in a layer of syntactic sugar and type-safety.</li>
+</ol>
+<p>We look into the low-level API first. You’ll never have to use it unless you want to implement a new “blocks” algorithm, but it is useful to illustrate whats happening.</p>
+</section>
+</section>
+<section id="primitiveblocks" class="level2">
+<h2 class="anchored" data-anchor-id="primitiveblocks">PrimitiveBlocks</h2>
+<p>Load and show 2D image that we will to work with…</p>
+<div id="d11a1b1a-fbb9-466d-8c4a-65c349e70834" class="cell" data-execution_count="3">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">ij</span><span class="op">.</span><span class="im">IJ</span><span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.*;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">util</span><span class="op">.*;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">position</span><span class="op">.*;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">img</span><span class="op">.</span><span class="im">array</span><span class="op">.*;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">type</span><span class="op">.</span><span class="im">numeric</span><span class="op">.</span><span class="im">real</span><span class="op">.*;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">type</span><span class="op">.</span><span class="im">numeric</span><span class="op">.</span><span class="im">integer</span><span class="op">.*;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">converter</span><span class="op">.</span><span class="im">RealTypeConverters</span><span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">img</span><span class="op">.</span><span class="im">display</span><span class="op">.</span><span class="im">imagej</span><span class="op">.</span><span class="im">ImageJFunctions</span><span class="op">;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">// var fn = "/Users/pietzsch/workspace/data/DrosophilaWing.tif";</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">// var fn = "https://mirror.imagej.net/ij/images/boats.gif";</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> fn <span class="op">=</span> <span class="st">"boats.gif"</span><span class="op">;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>RandomAccessibleInterval<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> img <span class="op">=</span> ImageJFunctions<span class="op">.</span><span class="fu">wrap</span><span class="op">(</span>IJ<span class="op">.</span><span class="fu">openImage</span><span class="op">(</span>fn<span class="op">));</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span><span class="op">(</span>img<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-blocks_files/figure-html/cell-4-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>1305387b-0f50-4d73-814d-493002fd2c8e</code></pre>
+</div>
+</div>
+<div id="084caece-00ba-428a-842f-44c5fbaa3a6b" class="cell" data-execution_count="4">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> crop <span class="op">=</span> Intervals<span class="op">.</span><span class="fu">createMinSize</span><span class="op">(</span><span class="dv">350</span><span class="op">,</span> <span class="dv">220</span><span class="op">,</span> <span class="dv">64</span><span class="op">,</span> <span class="dv">64</span><span class="op">);</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> cropped <span class="op">=</span> img<span class="op">.</span><span class="fu">view</span><span class="op">().</span><span class="fu">interval</span><span class="op">(</span>crop<span class="op">).</span><span class="fu">zeroMin</span><span class="op">();</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span><span class="op">(</span>cropped<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-blocks_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>35860173-5f84-40eb-851f-818892776e85</code></pre>
+</div>
+</div>
+<p>For any <code>RandomAccessible&lt;T&gt;</code> we can get a “block copier” using <code>PrimitiveBlocks.of(...)</code>. As mentioned above, this only works with <code>NativeType</code> that map 1:1 to primitives.</p>
+<p>So let’s get access to the blocks of our <code>img</code>:</p>
+<div id="088d76df-90ae-472b-a893-b5c3e96d3696" class="cell" data-execution_count="5">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">blocks</span><span class="op">.</span><span class="im">PrimitiveBlocks</span><span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>PrimitiveBlocks<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> blocks <span class="op">=</span> PrimitiveBlocks<span class="op">.</span><span class="fu">of</span><span class="op">(</span>img<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We can now extract data into a primitive array (<code>byte[]</code> for our <code>UnsignedByteType</code> image). We extract the top 4x4 pixels of the cropped area:</p>
+<div id="00cddeaa-ebd0-48c9-a5f2-1901b32b03d5" class="cell" data-execution_count="6">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span><span class="op">[]</span> pos <span class="op">=</span> <span class="op">{</span><span class="dv">350</span><span class="op">,</span> <span class="dv">220</span><span class="op">};</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span><span class="op">[]</span> size <span class="op">=</span> <span class="op">{</span><span class="dv">4</span><span class="op">,</span> <span class="dv">4</span><span class="op">};</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="dt">byte</span><span class="op">[]</span> array <span class="op">=</span> <span class="kw">new</span> <span class="dt">byte</span><span class="op">[</span><span class="dv">4</span> <span class="op">*</span> <span class="dv">4</span><span class="op">];</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>blocks<span class="op">.</span><span class="fu">copy</span><span class="op">(</span>pos<span class="op">,</span> array<span class="op">,</span> size<span class="op">);</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="bu">Arrays</span><span class="op">.</span><span class="fu">toString</span><span class="op">(</span>array<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>[119, -76, -55, -50, 83, -119, -69, -51, 67, 86, -116, -58, 63, 72, 95, -81]</code></pre>
+</div>
+</div>
+<p>Why are there negative numbers? Because we use Java’s (signed) <code>byte</code> to represent <code>UnsignedByteType</code> values.</p>
+<p>Let’s convert to <code>IntType</code> and extract a <code>int[]</code> block instead.</p>
+<div id="65eac01c-ba03-47a2-85ca-20f7000eef9c" class="cell" data-execution_count="7">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>RandomAccessibleInterval<span class="op">&lt;</span>IntType<span class="op">&gt;</span> converted <span class="op">=</span> RealTypeConverters<span class="op">.</span><span class="fu">convert</span><span class="op">(</span>img<span class="op">,</span> <span class="kw">new</span> <span class="fu">IntType</span><span class="op">());</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>PrimitiveBlocks<span class="op">&lt;</span>IntType<span class="op">&gt;</span> blocks <span class="op">=</span> PrimitiveBlocks<span class="op">.</span><span class="fu">of</span><span class="op">(</span>converted<span class="op">);</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span><span class="op">[]</span> array <span class="op">=</span> <span class="kw">new</span> <span class="dt">int</span><span class="op">[</span><span class="dv">4</span> <span class="op">*</span> <span class="dv">4</span><span class="op">];</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>blocks<span class="op">.</span><span class="fu">copy</span><span class="op">(</span>pos<span class="op">,</span> array<span class="op">,</span> size<span class="op">);</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="bu">Arrays</span><span class="op">.</span><span class="fu">toString</span><span class="op">(</span>array<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>[119, 180, 201, 206, 83, 137, 187, 205, 67, 86, 140, 198, 63, 72, 95, 175]</code></pre>
+</div>
+</div>
+<p>Note that <code>PrimitiveBlocks.of(...)</code> understood the virtual type conversion.</p>
+<p>It also understands many virtual coordinate transforms.</p>
+<div id="ade356b5-47cf-47ba-8a50-9eb2178ba119" class="cell" data-execution_count="8">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> croppedAndConverted <span class="op">=</span> img<span class="op">.</span><span class="fu">view</span><span class="op">()</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">interval</span><span class="op">(</span>crop<span class="op">)</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">zeroMin</span><span class="op">()</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">convert</span><span class="op">(</span>IntType<span class="op">::</span><span class="kw">new</span><span class="op">,</span> <span class="op">(</span>b<span class="op">,</span>i<span class="op">)</span> <span class="op">-&gt;</span> i<span class="op">.</span><span class="fu">set</span><span class="op">(</span>b<span class="op">.</span><span class="fu">get</span><span class="op">()));</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>PrimitiveBlocks<span class="op">&lt;</span>IntType<span class="op">&gt;</span> blocks <span class="op">=</span> PrimitiveBlocks<span class="op">.</span><span class="fu">of</span><span class="op">(</span>croppedAndConverted<span class="op">);</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span><span class="op">[]</span> pos <span class="op">=</span> <span class="op">{</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">};</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span><span class="op">[]</span> array <span class="op">=</span> <span class="kw">new</span> <span class="dt">int</span><span class="op">[</span><span class="dv">4</span> <span class="op">*</span> <span class="dv">4</span><span class="op">];</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>blocks<span class="op">.</span><span class="fu">copy</span><span class="op">(</span>pos<span class="op">,</span> array<span class="op">,</span> size<span class="op">);</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="bu">Arrays</span><span class="op">.</span><span class="fu">toString</span><span class="op">(</span>array<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>[119, 180, 201, 206, 83, 137, 187, 205, 67, 86, 140, 198, 63, 72, 95, 175]</code></pre>
+</div>
+</div>
+<p>(Note that we copy starting from <code>(0, 0)</code> now, as the shift to <code>(350, 220)</code> happens in the View transform.)</p>
+<p>When <code>PrimitiveBlocks.of(...)</code> “understands” a <code>View</code> construction that ultimately end in CellImg, ArrayImg, etc., it and will create an optimized copier: Instead of using <code>RandomAccess</code> that checks for every pixel whether it enters a new <code>Cell</code>, whether it is out-of-bounds, etc., all these checks are precomputed and then relevant data from each <code>Cell</code> is copied in one go.</p>
+<section id="details-details" class="level4">
+<h4 class="anchored" data-anchor-id="details-details">Details, details…</h4>
+<p>The speedup can be dramatic, in particular if the underlying source data is in a <code>CellImg</code>. <br> Here is for example results of <a href="https://github.com/imglib/imglib2/blob/1fd92e5385127f25d27695771f001810c6e11109/src/test/java/net/imglib2/blocks/CopyBenchmarkViewPrimitiveBlocks.java"><code>CopyBenchmarkViewPrimitiveBlocks</code></a></p>
+<pre><code># JMH version: 1.35
+# VM version: JDK 17.0.3, OpenJDK 64-Bit Server VM, 17.0.3+7-LTS
+...
+
+Benchmark                                                  (oob)  (permute)  Mode  Cnt   Score   Error  Units
+CopyBenchmarkViewPrimitiveBlocks.benchmarkLoopBuilder       true       true  avgt    5  12,789 ± 0,285  ms/op
+CopyBenchmarkViewPrimitiveBlocks.benchmarkLoopBuilder       true      false  avgt    5   9,682 ± 0,152  ms/op
+CopyBenchmarkViewPrimitiveBlocks.benchmarkLoopBuilder      false       true  avgt    5  14,333 ± 0,099  ms/op
+CopyBenchmarkViewPrimitiveBlocks.benchmarkLoopBuilder      false      false  avgt    5  12,721 ± 0,123  ms/op
+CopyBenchmarkViewPrimitiveBlocks.benchmarkPrimitiveBlocks   true       true  avgt    5   0,541 ± 0,010  ms/op
+CopyBenchmarkViewPrimitiveBlocks.benchmarkPrimitiveBlocks   true      false  avgt    5   0,315 ± 0,024  ms/op
+CopyBenchmarkViewPrimitiveBlocks.benchmarkPrimitiveBlocks  false       true  avgt    5   0,570 ± 0,013  ms/op
+CopyBenchmarkViewPrimitiveBlocks.benchmarkPrimitiveBlocks  false      false  avgt    5   0,322 ± 0,008  ms/op</code></pre>
+<p>If a source <code>RandomAccessible</code> cannot be understood, <code>PrimitiveBlocks.of(...)</code> will return a fall-back implementation (based on <code>LoopBuilder</code>). <br> With the optional <code>OnFallback</code> argument of <code>PrimitiveBlocks.of(...)</code> it can be configured whether fall-back should be * silently accepted (<code>ACCEPT</code>), * a warning should be printed (<code>WARN</code>) – the default, * or an <code>IllegalArgumentException</code> thrown (<code>FAIL</code>). The warning/exception message explains why the source <code>RandomAccessible</code> requires fall-back.</p>
+<div id="49635f36-0308-4119-b276-f74d8e832011" class="cell" data-execution_count="9">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>RandomAccessible<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> func <span class="op">=</span> <span class="kw">new</span> FunctionRandomAccessible<span class="op">&lt;&gt;(</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>        <span class="dv">2</span><span class="op">,</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>        <span class="op">(</span>pos<span class="op">,</span> value<span class="op">)</span> <span class="op">-&gt;</span> value<span class="op">.</span><span class="fu">set</span><span class="op">((</span><span class="dt">int</span><span class="op">)</span> <span class="op">(</span>pos<span class="op">.</span><span class="fu">getIntPosition</span><span class="op">(</span><span class="dv">0</span><span class="op">)</span> <span class="op">*</span> pos<span class="op">.</span><span class="fu">getIntPosition</span><span class="op">(</span><span class="dv">1</span><span class="op">))),</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        UnsignedByteType<span class="op">::</span><span class="kw">new</span><span class="op">);</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>PrimitiveBlocks<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> blocks <span class="op">=</span> PrimitiveBlocks<span class="op">.</span><span class="fu">of</span><span class="op">(</span>func<span class="op">);</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span><span class="op">[]</span> pos <span class="op">=</span> <span class="op">{</span><span class="dv">1</span><span class="op">,</span> <span class="dv">1</span><span class="op">};</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="dt">byte</span><span class="op">[]</span> array <span class="op">=</span> <span class="kw">new</span> <span class="dt">byte</span><span class="op">[</span><span class="dv">4</span> <span class="op">*</span> <span class="dv">4</span><span class="op">];</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>blocks<span class="op">.</span><span class="fu">copy</span><span class="op">(</span>pos<span class="op">,</span> array<span class="op">,</span> size<span class="op">);</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="bu">Arrays</span><span class="op">.</span><span class="fu">toString</span><span class="op">(</span>array<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>The RandomAccessible net.imglib2.position.FunctionRandomAccessible@40c61e2c is only be supported through the fall-back implementation of PrimitiveBlocks. 
+Cannot analyze view net.imglib2.position.FunctionRandomAccessible@40c61e2c of class FunctionRandomAccessible</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>[1, 2, 3, 4, 2, 4, 6, 8, 3, 6, 9, 12, 4, 8, 12, 16]</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="blockprocessor" class="level2">
+<h2 class="anchored" data-anchor-id="blockprocessor">BlockProcessor</h2>
+<p>Once we can extract primitive arrays from <code>RandomAccessibleInterval</code>, the actual computation happens in <code>BlockProcessor</code>.</p>
+<p>This happens in two steps: 1. <strong>Backward:</strong> Inverse-transform the desired target interval to determine which source data we need to provide to the <code>BlockProcessor</code>. 2. <strong>Forward:</strong> Push the source data through the BlockProcessor to compute the target data (both primitive arrays).</p>
+<p>To try that, we’ll use a <code>BlockProcessor</code> for 2x downsampling. Normally we don’t use <code>BlockProcessor</code> directly, so the constructor of that one is not <code>public</code>. We need to extract it from a high-level operator (explained later):</p>
+<div id="e9e4ab09-ed78-4004-803f-a94af662f5a9" class="cell" data-execution_count="10">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">algorithm</span><span class="op">.</span><span class="im">blocks</span><span class="op">.*;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">algorithm</span><span class="op">.</span><span class="im">blocks</span><span class="op">.</span><span class="im">downsample</span><span class="op">.</span><span class="im">Downsample</span><span class="op">;</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>BlockProcessor<span class="op">&lt;</span><span class="dt">byte</span><span class="op">[],</span> <span class="dt">byte</span><span class="op">[]&gt;</span> processor <span class="op">=</span> Downsample</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">createOperator</span><span class="op">(</span><span class="kw">new</span> <span class="fu">UnsignedByteType</span><span class="op">(),</span> ComputationType<span class="op">.</span><span class="fu">FLOAT</span><span class="op">,</span> Downsample<span class="op">.</span><span class="fu">Offset</span><span class="op">.</span><span class="fu">HALF_PIXEL</span><span class="op">,</span> <span class="dv">2</span><span class="op">)</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">blockProcessor</span><span class="op">();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="backward-inverse-transform-the-desired-target-interval-to-determine-which-source-data-we-need-to-provide-to-the-blockprocessor." class="level4">
+<h4 class="anchored" data-anchor-id="backward-inverse-transform-the-desired-target-interval-to-determine-which-source-data-we-need-to-provide-to-the-blockprocessor.">1. Backward: Inverse-transform the desired target interval to determine which source data we need to provide to the <code>BlockProcessor</code>.</h4>
+<p>Now we can ask the <code>processor</code> which source interval we will need to produce a given target interval. (In this case, the source interval is 2x larger and appropriately shifted for downsampling).</p>
+<div id="597fb936-4658-4385-93e1-df63eaedf692" class="cell" data-execution_count="11">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>Interval interval <span class="op">=</span> Intervals<span class="op">.</span><span class="fu">createMinSize</span><span class="op">(</span><span class="dv">200</span><span class="op">,</span> <span class="dv">100</span><span class="op">,</span> <span class="dv">64</span><span class="op">,</span> <span class="dv">64</span><span class="op">);</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">"target interval = "</span> <span class="op">+</span> Intervals<span class="op">.</span><span class="fu">toString</span><span class="op">(</span>interval<span class="op">));</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>processor<span class="op">.</span><span class="fu">setTargetInterval</span><span class="op">(</span>interval<span class="op">);</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">"source interval = "</span> <span class="op">+</span> Intervals<span class="op">.</span><span class="fu">toString</span><span class="op">(</span>processor<span class="op">.</span><span class="fu">getSourceInterval</span><span class="op">()));</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>target interval = [(200, 100) -- (263, 163) = 64x64]
+source interval = [(400, 200) -- (527, 327) = 128x128]</code></pre>
+</div>
+</div>
+</section>
+<section id="forward-push-the-source-data-through-the-blockprocessor-to-compute-the-target-data-both-primitive-arrays." class="level4">
+<h4 class="anchored" data-anchor-id="forward-push-the-source-data-through-the-blockprocessor-to-compute-the-target-data-both-primitive-arrays.">2. Forward: Push the source data through the BlockProcessor to compute the target data (both primitive arrays).</h4>
+<p>We first need to provide some source data for processing. We get that via <code>PrimitiveBlocks.copy(...)</code>, where we specify the source pos/size as the source interval obtained from <code>processor</code>. (We can also ask <code>processor</code> to allocate a primitive array for holding the input data.)</p>
+<div id="8b0dce53-2198-4395-a3ab-568a52fd2882" class="cell" data-execution_count="12">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="dt">byte</span><span class="op">[]</span> sourceData <span class="op">=</span> <span class="kw">new</span> <span class="dt">byte</span><span class="op">[</span><span class="dv">128</span> <span class="op">*</span> <span class="dv">128</span><span class="op">];</span> <span class="co">// processor.getSourceBuffer();</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>PrimitiveBlocks<span class="op">.</span><span class="fu">of</span><span class="op">(</span>img<span class="op">).</span><span class="fu">copy</span><span class="op">(</span>processor<span class="op">.</span><span class="fu">getSourcePos</span><span class="op">(),</span> sourceData<span class="op">,</span> processor<span class="op">.</span><span class="fu">getSourceSize</span><span class="op">());</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We allocate a primitive array to hold the result, then call <code>BlockProcessor.compute(...)</code>.</p>
+<div id="e5632831-b17f-41f5-a00d-1cb2dbc90897" class="cell" data-execution_count="13">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="dt">byte</span><span class="op">[]</span> targetData <span class="op">=</span> <span class="kw">new</span> <span class="dt">byte</span><span class="op">[</span><span class="dv">64</span> <span class="op">*</span> <span class="dv">64</span><span class="op">];</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>processor<span class="op">.</span><span class="fu">compute</span><span class="op">(</span>sourceData<span class="op">,</span> targetData<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Finally, we show the result wrapped as an <code>ArrayImg</code>, as well as the source area it was obtained from.</p>
+<div id="b0983a90-7bcf-4be8-86f9-999d7d284a04" class="cell" data-execution_count="14">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> downsampled <span class="op">=</span> ArrayImgs<span class="op">.</span><span class="fu">unsignedBytes</span><span class="op">(</span>targetData<span class="op">,</span> <span class="dv">64</span><span class="op">,</span> <span class="dv">64</span><span class="op">);</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span><span class="op">(</span>downsampled<span class="op">);</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span><span class="op">(</span>img<span class="op">.</span><span class="fu">view</span><span class="op">().</span><span class="fu">interval</span><span class="op">(</span>processor<span class="op">.</span><span class="fu">getSourceInterval</span><span class="op">()));</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-blocks_files/figure-html/cell-15-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-blocks_files/figure-html/cell-15-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>c5e01808-e56c-4fed-9a54-820ece724509</code></pre>
+</div>
+</div>
+<p>As you can imagine, it is straightforward to chain <code>BlockProcessor</code>s, sending the target interval backwards through the chain, and the source data forwards via approriate temporary intermediate arrays. In fact, our <code>BlockProcessor</code> is already such a concatenation (convert <code>byte[]</code> to <code>float[]</code>, downsample <code>float[]</code> to <code>float[]</code>, convert <code>float[]</code> to <code>byte[]</code>).</p>
+<div id="ad9c4087-d7b8-4a9e-889a-b0924da62254" class="cell" data-execution_count="15">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span>processor<span class="op">.</span><span class="fu">getClass</span><span class="op">());</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>class net.imglib2.algorithm.blocks.ConcatenatedBlockProcessor</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="blocksupplier-and-unaryblockoperator" class="level2">
+<h2 class="anchored" data-anchor-id="blocksupplier-and-unaryblockoperator">BlockSupplier and UnaryBlockOperator</h2>
+<p>With the details out of the way, let’s look at how this is wrapped into a more ImgLib2-like API.</p>
+<p>The <code>BlockSupplier</code> interface is more or less equivalent to <code>PrimitiveBlocks</code>. The above code works fine if you replace <code>PrimitiveBlocks</code> with <code>BlockSupplier</code>.</p>
+<p><code>BlockSupplier</code> provides additional default methods for chaining operations, and support for wrapping into a <code>CachedCellImg</code>, etc. This is not available in imglib2 core, where <code>PrimitiveBlocks</code> lives, therefore the duplication… (<code>BlockSupplier</code> lives in imglib2-algorithm.)</p>
+<div id="0fc56af8-c7df-48ad-9e95-1c1ab77120ba" class="cell" data-execution_count="16">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>BlockSupplier<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> blocks <span class="op">=</span> BlockSupplier<span class="op">.</span><span class="fu">of</span><span class="op">(</span>img<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The <code>UnaryBlockOperator&lt;S,T&gt;</code> interface wraps <code>BlockProcessor&lt;I,O&gt;</code>. The generic parameters <code>&lt;S,T&gt;</code> are the ImgLib2 Types corresponding to the primitive array types <code>&lt;I,O&gt;</code>.</p>
+<p>Here is the downsampling operator we already used above:</p>
+<div id="266c54d2-a7d8-4e7c-8f36-5ea49920c9a7" class="cell" data-execution_count="17">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>UnaryBlockOperator<span class="op">&lt;</span>UnsignedByteType<span class="op">,</span> UnsignedByteType<span class="op">&gt;</span> operator <span class="op">=</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>        Downsample<span class="op">.</span><span class="fu">createOperator</span><span class="op">(</span><span class="kw">new</span> <span class="fu">UnsignedByteType</span><span class="op">(),</span> ComputationType<span class="op">.</span><span class="fu">FLOAT</span><span class="op">,</span> Downsample<span class="op">.</span><span class="fu">Offset</span><span class="op">.</span><span class="fu">HALF_PIXEL</span><span class="op">,</span> <span class="dv">2</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="chaining-operators" class="level3">
+<h3 class="anchored" data-anchor-id="chaining-operators">Chaining operators</h3>
+<p><code>UnaryBlockOperator</code> knows the dimensionality of its source and target spaces as well as its source and target Types. So does <code>BlockSupplier</code>.</p>
+<div id="c6c811d3-d387-4150-952b-dc0fc86776db" class="cell" data-execution_count="18">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">"blocks.numDimensions   = "</span> <span class="op">+</span> blocks<span class="op">.</span><span class="fu">numDimensions</span><span class="op">());</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">"blocks.type            = "</span> <span class="op">+</span> blocks<span class="op">.</span><span class="fu">getType</span><span class="op">().</span><span class="fu">getClass</span><span class="op">().</span><span class="fu">getSimpleName</span><span class="op">());</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">"op.numSourceDimensions = "</span> <span class="op">+</span> operator<span class="op">.</span><span class="fu">numSourceDimensions</span><span class="op">());</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">"op.sourceType          = "</span> <span class="op">+</span> operator<span class="op">.</span><span class="fu">getSourceType</span><span class="op">().</span><span class="fu">getClass</span><span class="op">().</span><span class="fu">getSimpleName</span><span class="op">());</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">"op.numTargetDimensions = "</span> <span class="op">+</span> operator<span class="op">.</span><span class="fu">numTargetDimensions</span><span class="op">());</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">"op.targetType          = "</span> <span class="op">+</span> operator<span class="op">.</span><span class="fu">getTargetType</span><span class="op">().</span><span class="fu">getClass</span><span class="op">().</span><span class="fu">getSimpleName</span><span class="op">());</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>blocks.numDimensions   = 2
+blocks.type            = UnsignedByteType
+op.numSourceDimensions = 2
+op.sourceType          = UnsignedByteType
+op.numTargetDimensions = 2
+op.targetType          = UnsignedByteType</code></pre>
+</div>
+</div>
+<p>This allows for type-safe (at compile-time) and “dimensionality-safe” (at runtime) concatenation.</p>
+<p>Concatenating two <code>UnaryBlockOperator</code>s yields a new <code>UnaryBlockOperator</code>.<br> Concatenating a <code>BlockSupplier</code> and a <code>UnaryBlockOperator</code>s yields a new <code>BlockSupplier</code>.</p>
+<div id="589d28d4-980d-4e55-b3ee-de712d5275af" class="cell" data-execution_count="19">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>BlockSupplier<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> blocks <span class="op">=</span> BlockSupplier<span class="op">.</span><span class="fu">of</span><span class="op">(</span>img<span class="op">);</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>UnaryBlockOperator<span class="op">&lt;</span>UnsignedByteType<span class="op">,</span> UnsignedByteType<span class="op">&gt;</span> operator <span class="op">=</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>        Downsample<span class="op">.</span><span class="fu">createOperator</span><span class="op">(</span><span class="kw">new</span> <span class="fu">UnsignedByteType</span><span class="op">(),</span> ComputationType<span class="op">.</span><span class="fu">FLOAT</span><span class="op">,</span> Downsample<span class="op">.</span><span class="fu">Offset</span><span class="op">.</span><span class="fu">HALF_PIXEL</span><span class="op">,</span> <span class="dv">2</span><span class="op">);</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>BlockSupplier<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> concatenation <span class="op">=</span> blocks<span class="op">.</span><span class="fu">andThen</span><span class="op">(</span>operator<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Note, that creating the operator we had to specify source type (<code>new UnsignedByteType()</code> and number of source dimensions (<code>2</code>). These must match those of <code>blocks</code>, so we could also directly get them from the thing we are concatenating to.</p>
+<p>To avoid this duplication, <code>BlockSupplier.andThen(...)</code> also accepts operator factory functions.</p>
+<div id="98e1b1e4-0c08-43ef-8dbc-0ac0bb919c83" class="cell" data-execution_count="20">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>BlockSupplier<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> blocks <span class="op">=</span> BlockSupplier<span class="op">.</span><span class="fu">of</span><span class="op">(</span>img<span class="op">);</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="dt">long</span><span class="op">[]</span> size <span class="op">=</span> img<span class="op">.</span><span class="fu">dimensionsAsLongArray</span><span class="op">();</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Try to run the following cell multiple times…</p>
+<div id="ae1f4e13-6ea7-4141-995b-7b9fff8528da" class="cell" data-execution_count="21">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>blocks <span class="op">=</span> blocks<span class="op">.</span><span class="fu">andThen</span><span class="op">(</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    Downsample<span class="op">.</span><span class="fu">downsample</span><span class="op">(</span>ComputationType<span class="op">.</span><span class="fu">FLOAT</span><span class="op">,</span> Downsample<span class="op">.</span><span class="fu">Offset</span><span class="op">.</span><span class="fu">HALF_PIXEL</span><span class="op">));</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>size <span class="op">=</span> Downsample<span class="op">.</span><span class="fu">getDownsampledDimensions</span><span class="op">(</span>size<span class="op">);</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="dt">byte</span><span class="op">[]</span> data <span class="op">=</span> <span class="kw">new</span> <span class="dt">byte</span><span class="op">[(</span><span class="dt">int</span><span class="op">)(</span>size<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">*</span> size<span class="op">[</span><span class="dv">1</span><span class="op">])];</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>blocks<span class="op">.</span><span class="fu">copy</span><span class="op">(</span><span class="kw">new</span> <span class="dt">long</span><span class="op">[]</span> <span class="op">{</span><span class="dv">0</span><span class="op">,</span><span class="dv">0</span><span class="op">},</span> data<span class="op">,</span> <span class="bu">Util</span><span class="op">.</span><span class="fu">long2int</span><span class="op">(</span>size<span class="op">));</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span><span class="op">(</span>ArrayImgs<span class="op">.</span><span class="fu">unsignedBytes</span><span class="op">(</span>data<span class="op">,</span> size<span class="op">));</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-blocks_files/figure-html/cell-22-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<pre><code>c28d1b14-3eaf-40a5-98a0-e8760f1e1325</code></pre>
+</div>
+</div>
+</section>
+<section id="wrap-as-cellimg" class="level3">
+<h3 class="anchored" data-anchor-id="wrap-as-cellimg">Wrap as CellImg</h3>
+<div id="eb50b48a-eb71-4974-8302-f9e46bd7cea8" class="cell" data-execution_count="22">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>RandomAccessibleInterval<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> cellImg <span class="op">=</span> blocks<span class="op">.</span><span class="fu">toCellImg</span><span class="op">(</span>size<span class="op">,</span> <span class="dv">64</span><span class="op">);</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span><span class="op">(</span>cellImg<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-blocks_files/figure-html/cell-23-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<pre><code>d7fd6759-4ba4-46ee-8384-c99a12fe49ce</code></pre>
+</div>
+</div>
+</section>
+<section id="process-in-tiles" class="level3">
+<h3 class="anchored" data-anchor-id="process-in-tiles">Process in Tiles</h3>
+<p><code>BlockSupplier.tile(...)</code> splits the computation of a requested target interval into computations of sub-intervals of a specified (maximum) size. The results are stored into temporary buffers and then copied into the target primitive array.</p>
+<p>Applications for this are: * Computing large outputs (e. g. to write to N5 or wrap as ArrayImg) with operators that have better performance with smaller block sizes. * Avoiding excessively large blocks (e. g. when chaining multiple downsampling operators).</p>
+<div id="ab6e3a9c-bcdd-4398-bac5-2998d9214566" class="cell" data-execution_count="23">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>blocks <span class="op">=</span> blocks<span class="op">.</span><span class="fu">tile</span><span class="op">(</span><span class="dv">16</span><span class="op">);</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>blocks<span class="op">.</span><span class="fu">copy</span><span class="op">(</span><span class="kw">new</span> <span class="dt">long</span><span class="op">[]</span> <span class="op">{</span><span class="dv">0</span><span class="op">,</span><span class="dv">0</span><span class="op">},</span> data<span class="op">,</span> <span class="bu">Util</span><span class="op">.</span><span class="fu">long2int</span><span class="op">(</span>size<span class="op">));</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span><span class="op">(</span>ArrayImgs<span class="op">.</span><span class="fu">unsignedBytes</span><span class="op">(</span>data<span class="op">,</span> size<span class="op">));</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="05-blocks_files/figure-html/cell-24-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<pre><code>85a843b1-7cbd-472f-9742-596de496f4ef</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="advanced-examples" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-examples">Advanced examples</h2>
+<section id="works-with-volatileviews" class="level4">
+<h4 class="anchored" data-anchor-id="works-with-volatileviews">Works with VolatileViews</h4>
+<p>Load and show a bigger 3D image (834x388x357).</p>
+<div id="878d9fbb-022f-4fd2-850d-23be76ea5017" class="cell" data-execution_count="24">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">algorithm</span><span class="op">.</span><span class="im">blocks</span><span class="op">.</span><span class="im">convert</span><span class="op">.</span><span class="im">Convert</span><span class="op">;</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">algorithm</span><span class="op">.</span><span class="im">blocks</span><span class="op">.</span><span class="im">convolve</span><span class="op">.</span><span class="im">Convolve</span><span class="op">;</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">algorithm</span><span class="op">.</span><span class="im">blocks</span><span class="op">.</span><span class="im">downsample</span><span class="op">.</span><span class="im">Downsample</span><span class="op">;</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">algorithm</span><span class="op">.</span><span class="im">blocks</span><span class="op">.</span><span class="im">transform</span><span class="op">.</span><span class="im">Transform</span><span class="op">;</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">static</span><span class="im"> net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">view</span><span class="op">.</span><span class="im">fluent</span><span class="op">.</span><span class="im">RandomAccessibleIntervalView</span><span class="op">.</span><span class="im">Extension</span><span class="op">.*;</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">bdv</span><span class="op">.</span><span class="im">util</span><span class="op">.*;</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">bdv</span><span class="op">.</span><span class="im">viewer</span><span class="op">.</span><span class="im">DisplayMode</span><span class="op">;</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span> fn <span class="op">=</span> <span class="st">"e002_stack_fused-8bit.tif"</span><span class="op">;</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>RandomAccessibleInterval<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> img <span class="op">=</span> ImageJFunctions<span class="op">.</span><span class="fu">wrap</span><span class="op">(</span>IJ<span class="op">.</span><span class="fu">openImage</span><span class="op">(</span>fn<span class="op">));</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a><span class="dt">long</span><span class="op">[]</span> size <span class="op">=</span> img<span class="op">.</span><span class="fu">dimensionsAsLongArray</span><span class="op">();</span></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>Bdv bdv <span class="op">=</span> BdvFunctions<span class="op">.</span><span class="fu">show</span><span class="op">(</span>img<span class="op">,</span> fn<span class="op">);</span></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>bdv<span class="op">.</span><span class="fu">getBdvHandle</span><span class="op">().</span><span class="fu">getViewerPanel</span><span class="op">().</span><span class="fu">setDisplayMode</span><span class="op">(</span><span class="bu">DisplayMode</span><span class="op">.</span><span class="fu">SINGLE</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Extend the image, make a <code>BlockSupplier</code>, convert to <code>FloatType</code>, apply Gaussian smoothing, and cache in a <code>CellImg</code>. <br> For showing it in BigDataViewer, we wrap it <code>VolatileViews.wrapAsVolatile(...)</code> for asynchronous (lazy) loading, so that we can see it working.</p>
+<div id="e69cfc60-94e3-4747-8bb3-608826707ad1" class="cell" data-execution_count="25">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">type</span><span class="op">.</span><span class="im">numeric</span><span class="op">.</span><span class="im">ARGBType</span><span class="op">;</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">bdv</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">volatiles</span><span class="op">.</span><span class="im">VolatileViews</span><span class="op">;</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">bdv</span><span class="op">.</span><span class="im">cache</span><span class="op">.</span><span class="im">SharedQueue</span><span class="op">;</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>RandomAccessibleInterval<span class="op">&lt;</span>FloatType<span class="op">&gt;</span> downsampledAndSmoothed <span class="op">=</span> BlockSupplier</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">of</span><span class="op">(</span>img<span class="op">.</span><span class="fu">view</span><span class="op">().</span><span class="fu">extend</span><span class="op">(</span><span class="fu">mirrorDouble</span><span class="op">()))</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">andThen</span><span class="op">(</span>Convert<span class="op">.</span><span class="fu">convert</span><span class="op">(</span><span class="kw">new</span> <span class="fu">FloatType</span><span class="op">()))</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">andThen</span><span class="op">(</span>Convolve<span class="op">.</span><span class="fu">gauss</span><span class="op">(</span><span class="dv">3</span><span class="op">))</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">toCellImg</span><span class="op">(</span>size<span class="op">,</span> <span class="dv">32</span><span class="op">);</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>BdvSource source <span class="op">=</span> BdvFunctions<span class="op">.</span><span class="fu">show</span><span class="op">(</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>        VolatileViews<span class="op">.</span><span class="fu">wrapAsVolatile</span><span class="op">(</span>downsampledAndSmoothed<span class="op">,</span> <span class="kw">new</span> <span class="fu">SharedQueue</span><span class="op">(</span><span class="dv">8</span><span class="op">)),</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"destImg"</span><span class="op">,</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>        Bdv<span class="op">.</span><span class="fu">options</span><span class="op">().</span><span class="fu">addTo</span><span class="op">(</span>bdv<span class="op">));</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>source<span class="op">.</span><span class="fu">setColor</span><span class="op">(</span><span class="kw">new</span> <span class="fu">ARGBType</span><span class="op">(</span><span class="bn">0x00ff00</span><span class="op">));</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>source<span class="op">.</span><span class="fu">setDisplayRange</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">255</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="influence-of-tiling-on-memory-and-performance" class="level4">
+<h4 class="anchored" data-anchor-id="influence-of-tiling-on-memory-and-performance">Influence of tiling on memory and performance</h4>
+<div id="7e67a123-c281-46ef-b95a-759d44342540" class="cell" data-execution_count="41">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">realtransform</span><span class="op">.</span><span class="im">AffineTransform3D</span><span class="op">;</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>AffineTransform3D affine <span class="op">=</span> <span class="kw">new</span> <span class="fu">AffineTransform3D</span><span class="op">();</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>affine<span class="op">.</span><span class="fu">rotate</span><span class="op">(</span><span class="dv">2</span><span class="op">,</span> <span class="fl">0.3</span><span class="op">);</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>affine<span class="op">.</span><span class="fu">rotate</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="fl">0.1</span><span class="op">);</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>affine<span class="op">.</span><span class="fu">rotate</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="fl">0.6</span><span class="op">);</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>affine<span class="op">.</span><span class="fu">scale</span><span class="op">(</span><span class="fl">0.9</span><span class="op">);</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="dt">long</span><span class="op">[]</span> min <span class="op">=</span> <span class="op">{</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">};</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="dt">long</span><span class="op">[]</span> size <span class="op">=</span> <span class="op">{</span><span class="dv">512</span><span class="op">,</span> <span class="dv">512</span><span class="op">,</span> <span class="dv">1</span><span class="op">};</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="dt">byte</span><span class="op">[]</span> dest <span class="op">=</span> <span class="kw">new</span> <span class="dt">byte</span><span class="op">[(</span><span class="dt">int</span><span class="op">)</span> Intervals<span class="op">.</span><span class="fu">numElements</span><span class="op">(</span>size<span class="op">)];</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>BlockSupplier<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> blocks <span class="op">=</span> BlockSupplier</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">of</span><span class="op">(</span>img<span class="op">.</span><span class="fu">view</span><span class="op">().</span><span class="fu">extend</span><span class="op">(</span><span class="fu">mirrorDouble</span><span class="op">()))</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">andThen</span><span class="op">(</span>Convert<span class="op">.</span><span class="fu">convert</span><span class="op">(</span><span class="kw">new</span> <span class="fu">FloatType</span><span class="op">()))</span></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">andThen</span><span class="op">(</span>Downsample<span class="op">.</span><span class="fu">downsample</span><span class="op">())</span></span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">andThen</span><span class="op">(</span><span class="bu">Transform</span><span class="op">.</span><span class="fu">affine</span><span class="op">(</span>affine<span class="op">,</span> <span class="bu">Transform</span><span class="op">.</span><span class="fu">Interpolation</span><span class="op">.</span><span class="fu">NLINEAR</span><span class="op">))</span></span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">//.tile(32)</span></span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">andThen</span><span class="op">(</span>Convert<span class="op">.</span><span class="fu">convert</span><span class="op">(</span><span class="kw">new</span> <span class="fu">UnsignedByteType</span><span class="op">()));</span></span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>blocks<span class="op">.</span><span class="fu">copy</span><span class="op">(</span>min<span class="op">,</span> dest<span class="op">,</span> <span class="bu">Util</span><span class="op">.</span><span class="fu">long2int</span><span class="op">(</span>size<span class="op">));</span></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span><span class="op">(</span>ArrayImgs<span class="op">.</span><span class="fu">unsignedBytes</span><span class="op">(</span>dest<span class="op">,</span> size<span class="op">));</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-error">
+<pre><code>EvalException: Java heap space</code></pre>
+</div>
+</div>
+<p>What is a good tile size? Not too small, not too big… <br> Let’s look at performance. Play around a bit with which operations to chain.</p>
+<div id="7bfae16b-5d22-487e-9341-26ae2627476d" class="cell" data-execution_count="47">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">static</span> <span class="dt">long</span> <span class="fu">timeIt</span><span class="op">(</span><span class="dt">int</span> numIterations<span class="op">,</span> <span class="bu">Runnable</span> r<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> start <span class="op">=</span> <span class="bu">System</span><span class="op">.</span><span class="fu">currentTimeMillis</span><span class="op">();</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> numIterations<span class="op">;</span> i<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>        r<span class="op">.</span><span class="fu">run</span><span class="op">();</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span><span class="bu">System</span><span class="op">.</span><span class="fu">currentTimeMillis</span><span class="op">()</span> <span class="op">-</span> start<span class="op">)</span> <span class="op">/</span> numIterations<span class="op">;</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>BlockSupplier<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> blocks <span class="op">=</span> BlockSupplier</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">of</span><span class="op">(</span>img<span class="op">.</span><span class="fu">view</span><span class="op">().</span><span class="fu">extend</span><span class="op">(</span><span class="fu">mirrorDouble</span><span class="op">()))</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">andThen</span><span class="op">(</span>Convert<span class="op">.</span><span class="fu">convert</span><span class="op">(</span><span class="kw">new</span> <span class="fu">FloatType</span><span class="op">()))</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">andThen</span><span class="op">(</span>Downsample<span class="op">.</span><span class="fu">downsample</span><span class="op">())</span></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">andThen</span><span class="op">(</span><span class="bu">Transform</span><span class="op">.</span><span class="fu">affine</span><span class="op">(</span>affine<span class="op">,</span> <span class="bu">Transform</span><span class="op">.</span><span class="fu">Interpolation</span><span class="op">.</span><span class="fu">NLINEAR</span><span class="op">))</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">andThen</span><span class="op">(</span>Convert<span class="op">.</span><span class="fu">convert</span><span class="op">(</span><span class="kw">new</span> <span class="fu">UnsignedByteType</span><span class="op">()));</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span><span class="op">[]</span> tileSizes <span class="op">=</span> <span class="op">{</span><span class="dv">4</span><span class="op">,</span> <span class="dv">8</span><span class="op">,</span> <span class="dv">16</span><span class="op">,</span> <span class="dv">32</span><span class="op">};</span></span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> j <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> j <span class="op">&lt;</span> <span class="dv">3</span><span class="op">;</span> j<span class="op">++)</span> <span class="op">{</span></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> tileSize <span class="op">:</span> tileSizes<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>        BlockSupplier<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;</span> tiledBlocks <span class="op">=</span> blocks<span class="op">.</span><span class="fu">tile</span><span class="op">(</span>tileSize<span class="op">);</span></span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> millis <span class="op">=</span> <span class="fu">timeIt</span><span class="op">(</span><span class="dv">5</span><span class="op">,</span> <span class="op">()</span> <span class="op">-&gt;</span> tiledBlocks<span class="op">.</span><span class="fu">copy</span><span class="op">(</span>min<span class="op">,</span> dest<span class="op">,</span> <span class="bu">Util</span><span class="op">.</span><span class="fu">long2int</span><span class="op">(</span>size<span class="op">)));</span></span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">"tile size = "</span> <span class="op">+</span> tileSize <span class="op">+</span> <span class="st">": "</span> <span class="op">+</span> millis <span class="op">+</span> <span class="st">" ms"</span><span class="op">);</span></span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">();</span></span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>tile size = 4: 88 ms
+tile size = 8: 77 ms
+tile size = 16: 108 ms
+tile size = 32: 167 ms
+
+tile size = 4: 86 ms
+tile size = 8: 77 ms
+tile size = 16: 108 ms
+tile size = 32: 166 ms
+
+tile size = 4: 85 ms
+tile size = 8: 78 ms
+tile size = 16: 111 ms
+tile size = 32: 170 ms
+</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/saalfeldlab\.github\.io\/i2k2024-lazy-workshop\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

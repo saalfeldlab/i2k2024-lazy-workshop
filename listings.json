@@ -3,7 +3,12 @@
     "listing": "/index.html",
     "items": [
       "/posts/01-setup.html",
-      "/posts/02-n5/2022-09-27-n5-imglib2.html"
+      "/posts/02-lazy-imglib2/02-lazy-imglib2.html",
+      "/posts/03-n5/03-n5.html",
+      "/posts/04-cache/04-cache.html",
+      "/posts/05-blocks/05-blocks.html",
+      "/posts/06-spark/06-spark.html",
+      "/posts/02-lazy-imglib2/juliaset.html"
     ]
   }
 ]

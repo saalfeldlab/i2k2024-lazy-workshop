@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/01-setup.html</loc>
-    <lastmod>2024-10-18T01:50:33.640Z</lastmod>
+    <loc>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/04-cache/04-cache.html</loc>
+    <lastmod>2024-10-25T00:37:59.521Z</lastmod>
+  </url>
+  <url>
+    <loc>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/05-blocks/05-blocks.html</loc>
+    <lastmod>2024-10-24T15:04:01.356Z</lastmod>
+  </url>
+  <url>
+    <loc>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-lazy-imglib2/02-lazy-imglib2.html</loc>
+    <lastmod>2024-10-25T00:53:22.663Z</lastmod>
+  </url>
+  <url>
+    <loc>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/06-spark/06-spark.html</loc>
+    <lastmod>2024-10-24T10:29:00.244Z</lastmod>
   </url>
   <url>
     <loc>https://saalfeldlab.github.io/i2k2024-lazy-workshop/index.html</loc>
     <lastmod>2024-10-18T01:50:33.640Z</lastmod>
   </url>
   <url>
-    <loc>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-n5/2022-09-27-n5-imglib2.html</loc>
-    <lastmod>2024-10-18T01:50:33.643Z</lastmod>
+    <loc>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-lazy-imglib2/juliaset.html</loc>
+    <lastmod>2024-10-24T15:04:01.352Z</lastmod>
+  </url>
+  <url>
+    <loc>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/03-n5/03-n5.html</loc>
+    <lastmod>2024-10-23T09:01:21.248Z</lastmod>
+  </url>
+  <url>
+    <loc>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/01-setup.html</loc>
+    <lastmod>2024-10-18T01:50:33.640Z</lastmod>
   </url>
 </urlset>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark</title>
+<title>Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark – imglib2-ij-bug</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,28 +20,60 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./favicon.ico" rel="icon">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../favicon.ico" rel="icon">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -69,83 +101,25 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark" href="index.xml" data-external="1"><meta property="og:title" content="Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark">
-<meta property="og:image" content="https://saalfeldlab.github.io/i2k2024-lazy-workshop/imglib2-logo.png">
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark">
+<meta property="og:image" content="https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-lazy-imglib2/imglib2-logo.png">
 <meta property="og:site_name" content="Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./imglib2-logo-header.png" alt="" class="navbar-logo">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../imglib2-logo-header.png" alt="" class="navbar-logo">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Lazy Parallel Processing and Visualization of Large Data with ImgLib2, BigDataViewer, the N5-API, and Spark</span>
     </a>
   </div>
@@ -166,7 +140,7 @@ window.Quarto = {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -178,321 +152,66 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(7)</span></div><div class="category" data-category="cache">cache <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cell">cell <span class="quarto-category-count">(1)</span></div><div class="category" data-category="conda">conda <span class="quarto-category-count">(1)</span></div><div class="category" data-category="hdf5">hdf5 <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ijava">ijava <span class="quarto-category-count">(1)</span></div><div class="category" data-category="imglib2">imglib2 <span class="quarto-category-count">(5)</span></div><div class="category" data-category="java">java <span class="quarto-category-count">(3)</span></div><div class="category" data-category="jupyter">jupyter <span class="quarto-category-count">(6)</span></div><div class="category" data-category="lazy">lazy <span class="quarto-category-count">(1)</span></div><div class="category" data-category="n5">n5 <span class="quarto-category-count">(2)</span></div><div class="category" data-category="notebook">notebook <span class="quarto-category-count">(5)</span></div><div class="category" data-category="quarto">quarto <span class="quarto-category-count">(1)</span></div><div class="category" data-category="spark">spark <span class="quarto-category-count">(1)</span></div><div class="category" data-category="zarr">zarr <span class="quarto-category-count">(1)</span></div></div></div>
+    
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content"><div class="quarto-title-block"><div class="quarto-title-tools-only"><h1></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button" data-quarto-source-url="https://github.com/saalfeldlab/i2k2024-lazy-workshop/blob/main/posts/02-lazy-imglib2/imglib2-ij-bug.ipynb">View Source</a></li></ul></div></div>
 
 
 
 
+<div id="6b5707ed" class="cell" data-execution_count="1">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>mavenRepo scijava<span class="op">.</span><span class="fu">public</span> https<span class="op">:</span><span class="co">//maven.scijava.org/content/groups/public</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven org<span class="op">.</span><span class="fu">scijava</span><span class="op">:</span>scijava<span class="op">-</span>common<span class="op">:</span><span class="fl">2.99.0</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">:</span><span class="fl">7.1.2</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">-</span>ij<span class="op">:</span><span class="fl">2.0.3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="dd875dfa" class="cell" data-execution_count="2">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">ij</span><span class="op">.*;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">io</span><span class="op">.</span><span class="im">github</span><span class="op">.</span><span class="im">spencerpark</span><span class="op">.</span><span class="im">jupyter</span><span class="op">.</span><span class="im">kernel</span><span class="op">.</span><span class="im">display</span><span class="op">.</span><span class="im">common</span><span class="op">.*;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">io</span><span class="op">.</span><span class="im">github</span><span class="op">.</span><span class="im">spencerpark</span><span class="op">.</span><span class="im">jupyter</span><span class="op">.</span><span class="im">kernel</span><span class="op">.</span><span class="im">display</span><span class="op">.</span><span class="im">mime</span><span class="op">.*;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.*;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">img</span><span class="op">.</span><span class="im">imageplus</span><span class="op">.*;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">img</span><span class="op">.</span><span class="im">display</span><span class="op">.</span><span class="im">imagej</span><span class="op">.*;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">view</span><span class="op">.*;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">getKernelInstance</span><span class="op">().</span><span class="fu">getRenderer</span><span class="op">().</span><span class="fu">createRegistration</span><span class="op">(</span>RandomAccessibleInterval<span class="op">.</span><span class="fu">class</span><span class="op">)</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">preferring</span><span class="op">(</span>MIMEType<span class="op">.</span><span class="fu">IMAGE_PNG</span><span class="op">)</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">supporting</span><span class="op">(</span>MIMEType<span class="op">.</span><span class="fu">IMAGE_JPEG</span><span class="op">,</span> MIMEType<span class="op">.</span><span class="fu">IMAGE_GIF</span><span class="op">)</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">register</span><span class="op">((</span>rai<span class="op">,</span> context<span class="op">)</span> <span class="op">-&gt;</span> <span class="bu">Image</span><span class="op">.</span><span class="fu">renderImage</span><span class="op">(</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                ImageJFunctions<span class="op">.</span><span class="fu">wrap</span><span class="op">(</span>rai<span class="op">,</span> rai<span class="op">.</span><span class="fu">toString</span><span class="op">()).</span><span class="fu">getBufferedImage</span><span class="op">(),</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                context<span class="op">));</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="3d38edc0" class="cell" data-execution_count="3">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> imp <span class="op">=</span> IJ<span class="op">.</span><span class="fu">openImage</span><span class="op">(</span><span class="st">"https://mirror.imagej.net/ij/images/clown.jpg"</span><span class="op">);</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">// for later use without the compiler losing its mind, we must provide type information</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">// for the ImagePlus wrapper, so let's not use var here</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>RandomAccessibleInterval<span class="op">&lt;?&gt;</span> rai <span class="op">=</span> ImagePlusImgs<span class="op">.</span><span class="fu">from</span><span class="op">(</span>imp<span class="op">);</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">display</span><span class="op">(</span>rai<span class="op">,</span> <span class="st">"image/gif"</span><span class="op">);</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">//display(rai, "image/jpeg");</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">//display(rai, "image/png");</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<pre><code>IntImagePlus [320x200]</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<pre><code>fa8c15c5-658f-4107-928a-fcfcf4812bfe</code></pre>
+</div>
+</div>
 
 
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="conda,java,ijava,jupyter,quarto" data-listing-date-sort="1729141200000" data-listing-file-modified-sort="1729216233640" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="236">
-<div class="thumbnail">
-<p><a href="./posts/01-setup.html" class="no-external"></a></p><a href="./posts/01-setup.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-</a><p><a href="./posts/01-setup.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/01-setup.html" class="no-external">Setup instructions</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/01-setup.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('conda'); return false;">
-conda
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('java'); return false;">
-java
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('ijava'); return false;">
-ijava
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('jupyter'); return false;">
-jupyter
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('quarto'); return false;">
-quarto
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/01-setup.html" class="no-external">How to get started …</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/01-setup.html" class="no-external">
-<div class="listing-date">
-Oct 17, 2024
-</div>
-<div class="listing-author">
-Stephan Saalfeld
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="imglib2,jupyter,notebook" data-listing-date-sort="1729144800000" data-listing-file-modified-sort="1729817602663" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="534">
-<div class="thumbnail">
-<p><a href="./posts/02-lazy-imglib2/02-lazy-imglib2.html" class="no-external"></a></p><a href="./posts/02-lazy-imglib2/02-lazy-imglib2.html" class="no-external">
-<p class="card-img-top"><img src="posts/02-lazy-imglib2/02-lazy-imglib2_files/figure-html/cell-3-output-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/02-lazy-imglib2/02-lazy-imglib2.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/02-lazy-imglib2/02-lazy-imglib2.html" class="no-external">ImgLib2 is lazy</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/02-lazy-imglib2/02-lazy-imglib2.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('imglib2'); return false;">
-imglib2
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('jupyter'); return false;">
-jupyter
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('notebook'); return false;">
-notebook
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/02-lazy-imglib2/02-lazy-imglib2.html" class="no-external">… very, very lazy, like … everywhere!</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/02-lazy-imglib2/02-lazy-imglib2.html" class="no-external">
-<div class="listing-date">
-Oct 17, 2024
-</div>
-<div class="listing-author">
-Stephan Saalfeld
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="imglib2,java,n5,hdf5,zarr,jupyter,notebook" data-listing-date-sort="1729148400000" data-listing-file-modified-sort="1729674081248" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="345">
-<div class="thumbnail">
-<p><a href="./posts/03-n5/03-n5.html" class="no-external"></a></p><a href="./posts/03-n5/03-n5.html" class="no-external">
-<p class="card-img-top"><img src="posts/03-n5/03-n5_files/figure-html/cell-4-output-2.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/03-n5/03-n5.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/03-n5/03-n5.html" class="no-external">N5 API</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/03-n5/03-n5.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('imglib2'); return false;">
-imglib2
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('java'); return false;">
-java
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('n5'); return false;">
-n5
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('hdf5'); return false;">
-hdf5
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('zarr'); return false;">
-zarr
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('jupyter'); return false;">
-jupyter
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('notebook'); return false;">
-notebook
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/03-n5/03-n5.html" class="no-external">Read and write ImgLib2 data with the N5 API.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/03-n5/03-n5.html" class="no-external">
-<div class="listing-date">
-Oct 17, 2024
-</div>
-<div class="listing-author">
-Stephan Saalfeld
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="imglib2,jupyter,notebook,cache,lazy,cell" data-listing-date-sort="1729152000000" data-listing-file-modified-sort="1729816679521" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="190">
-<div class="thumbnail">
-<p><a href="./posts/04-cache/04-cache.html" class="no-external"></a></p><a href="./posts/04-cache/04-cache.html" class="no-external">
-<p class="card-img-top"><img src="posts/04-cache/04-cache_files/figure-html/cell-9-output-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/04-cache/04-cache.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/04-cache/04-cache.html" class="no-external">Lazy image processing with ImgLib2 cache</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/04-cache/04-cache.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('imglib2'); return false;">
-imglib2
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('jupyter'); return false;">
-jupyter
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('notebook'); return false;">
-notebook
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('cache'); return false;">
-cache
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('lazy'); return false;">
-lazy
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('cell'); return false;">
-cell
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/04-cache/04-cache.html" class="no-external">… by defining the processing operations over cells.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/04-cache/04-cache.html" class="no-external">
-<div class="listing-date">
-Oct 17, 2024
-</div>
-<div class="listing-author">
-Stephan Saalfeld
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="imglib2,java,n5,jupyter,notebook" data-listing-date-sort="1729155600000" data-listing-file-modified-sort="1729782241356" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1367">
-<div class="thumbnail">
-<p><a href="./posts/05-blocks/05-blocks.html" class="no-external"></a></p><a href="./posts/05-blocks/05-blocks.html" class="no-external">
-<p class="card-img-top"><img src="posts/05-blocks/05-blocks_files/figure-html/cell-4-output-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/05-blocks/05-blocks.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/05-blocks/05-blocks.html" class="no-external">Using the ImgLib2 blocks API</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/05-blocks/05-blocks.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('imglib2'); return false;">
-imglib2
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('java'); return false;">
-java
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('n5'); return false;">
-n5
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('jupyter'); return false;">
-jupyter
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('notebook'); return false;">
-notebook
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/05-blocks/05-blocks.html" class="no-external">Using the ImgLib2 blocks API for downsampling and convolution</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/05-blocks/05-blocks.html" class="no-external">
-<div class="listing-date">
-Oct 17, 2024
-</div>
-<div class="listing-author">
-Tobias Pietzsch
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-categories="imglib2,jupyter,notebook,spark" data-listing-date-sort="1729159200000" data-listing-file-modified-sort="1729765740244" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1252">
-<div class="thumbnail">
-<p><a href="./posts/06-spark/06-spark.html" class="no-external"></a></p><a href="./posts/06-spark/06-spark.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-</a><p><a href="./posts/06-spark/06-spark.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/06-spark/06-spark.html" class="no-external">Lazy processing with ImgLib2 and Spark</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/06-spark/06-spark.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('imglib2'); return false;">
-imglib2
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('jupyter'); return false;">
-jupyter
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('notebook'); return false;">
-notebook
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('spark'); return false;">
-spark
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/06-spark/06-spark.html" class="no-external">Working around (lack of) serialization.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/06-spark/06-spark.html" class="no-external">
-<div class="listing-date">
-Oct 17, 2024
-</div>
-<div class="listing-author">
-Stephan Saalfeld
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="6" data-listing-file-modified-sort="1729782241352" data-listing-reading-time-sort="1" data-listing-word-count-sort="128">
-<div class="thumbnail">
-<p><a href="./posts/02-lazy-imglib2/juliaset.html" class="no-external"></a></p><a href="./posts/02-lazy-imglib2/juliaset.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-</a><p><a href="./posts/02-lazy-imglib2/juliaset.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/02-lazy-imglib2/juliaset.html" class="no-external">Procedurally generated image</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/02-lazy-imglib2/juliaset.html" class="no-external"></a>
-</div>
-<div class="listing-description">
-<a href="./posts/02-lazy-imglib2/juliaset.html" class="no-external">continuous (defined at every real coordinate) and unbounded.</a>
-</div>
-</div>
-<div class="metadata">
-<p><a href="./posts/02-lazy-imglib2/juliaset.html" class="no-external"></a></p><a href="./posts/02-lazy-imglib2/juliaset.html" class="no-external">
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -582,6 +301,57 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       container: window.document.getElementById('quarto-embedded-source-code-modal')
     });
     clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
