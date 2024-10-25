@@ -126,14 +126,6 @@ public class SparkWorkshop implements Callable<Void> {
 			final var n5 = new N5Factory().openReader(n5Url);
 			final RandomAccessibleInterval<T> img = N5Utils.open(n5, n5Dataset);
 
-//			final var n5 = Singleton.get(
-//					n5Url,
-//					() -> new N5Factory().openReader(n5Url));
-//			final RandomAccessibleInterval<T> img = Singleton.get(
-//					n5Dataset,
-//					() -> (RandomAccessibleInterval<T>)N5Utils.open(n5, n5Dataset));
-
-
 			/* Use the new ImageJ plugin contrast limited local contrast normalization */
 			final var cllcn =
 					new ImageJStackOp<T>(
