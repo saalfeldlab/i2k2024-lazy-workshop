@@ -1,8 +1,10 @@
 package org.janelia.saalfeldlab.i2k2024;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
@@ -16,7 +18,9 @@ import org.janelia.saalfeldlab.n5.N5Writer;
 import org.janelia.saalfeldlab.n5.imglib2.N5Utils;
 import org.janelia.saalfeldlab.n5.universe.N5Factory;
 
+import net.imglib2.FinalInterval;
 import net.imglib2.RandomAccessibleInterval;
+import net.imglib2.algorithm.lazy.Caches;
 import net.imglib2.algorithm.util.Singleton;
 import net.imglib2.cache.img.ReadOnlyCachedCellImgFactory;
 import net.imglib2.cache.img.ReadOnlyCachedCellImgOptions;
@@ -177,6 +181,19 @@ public class SparkWorkshop implements Callable<Void> {
 					"img" + n5Dataset,
 					() -> (RandomAccessibleInterval<T>)N5Utils.open(n5, n5Dataset));
 
+			/* nothing has happened yet, so we can now pre-fetch the source,
+			(not the target, because that would multi-thread processing in
+			a single task which is supposed to use only one core) */
+
+			/* create an appropriately padded source interval */
+			final long[] paddedMin = new long[img.numDimensions()];
+			Arrays.setAll(paddedMin, d -> Math.max(0, gridBlock[0][d] - blockRadius));
+			final long[] paddedMax = new long[img.numDimensions()];
+			Arrays.setAll(paddedMax, d -> Math.min(img.max(d), gridBlock[1][0] + gridBlock[1][d] + blockRadius));
+			final var paddedInterval = new FinalInterval(paddedMin, paddedMax);
+			Caches.preFetch(img, paddedInterval, gridBlock[1], Executors.newCachedThreadPool());
+
+
 			final var cllcned = Singleton.get(
 					"cllcned" + n5OutDataset,
 					() -> {
@@ -204,6 +221,11 @@ public class SparkWorkshop implements Callable<Void> {
 
 			/* crop the block of interest */
 			final var block = Views.offsetInterval(cllcned, gridBlock[0], gridBlock[1]);
+
+			/* nothing has happened yet, so we can now pre-fetch the source,
+			(not the target, because that would multi-thread processing in
+			a single task which is supposed to use only one core) */
+			Caches.preFetch(img, block, gridBlock[1], Executors.newCachedThreadPool());
 
 			final N5Writer n5Writer = Singleton.get(
 					"n5Writer" + n5OutUrl,
