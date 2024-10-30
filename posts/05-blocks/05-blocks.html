@@ -214,10 +214,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>mavenRepo scijava<span class="op">.</span><span class="fu">public</span> https<span class="op">:</span><span class="co">//maven.scijava.org/content/groups/public</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">-</span>algorithm<span class="op">:</span><span class="fl">0.17.1</span><span class="op">-</span>SNAPSHOT</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">-</span>ij<span class="op">:</span><span class="fl">2.0.3</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven sc<span class="op">.</span><span class="fu">fiji</span><span class="op">:</span>bigdataviewer<span class="op">-</span>core<span class="op">:</span><span class="fl">10.6.2</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven org<span class="op">.</span><span class="fu">janelia</span><span class="op">.</span><span class="fu">saalfeldlab</span><span class="op">:</span>n5<span class="op">:</span><span class="fl">3.3.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven org<span class="op">.</span><span class="fu">scijava</span><span class="op">:</span>scijava<span class="op">-</span>common<span class="op">:</span><span class="fl">2.99.0</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">-</span>algorithm<span class="op">:</span><span class="fl">0.17.1</span><span class="op">-</span>SNAPSHOT</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">:</span><span class="fl">7.1.2</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">-</span>ij<span class="op">:</span><span class="fl">2.0.3</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven sc<span class="op">.</span><span class="fu">fiji</span><span class="op">:</span>bigdataviewer<span class="op">-</span>core<span class="op">:</span><span class="fl">10.6.2</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven org<span class="op">.</span><span class="fu">janelia</span><span class="op">.</span><span class="fu">saalfeldlab</span><span class="op">:</span>n5<span class="op">:</span><span class="fl">3.3.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div id="8b750ef6-1870-48b0-8939-de7cb4a66a13" class="cell" data-execution_count="2">
@@ -292,7 +294,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="3">
-<pre><code>1305387b-0f50-4d73-814d-493002fd2c8e</code></pre>
+<pre><code>89b8d9d7-72b6-4998-a81a-0e71ffe5c055</code></pre>
 </div>
 </div>
 <div id="084caece-00ba-428a-842f-44c5fbaa3a6b" class="cell" data-execution_count="4">
@@ -310,7 +312,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="4">
-<pre><code>35860173-5f84-40eb-851f-818892776e85</code></pre>
+<pre><code>ee567bcf-71fa-4f9a-9df4-ea7c80a932e1</code></pre>
 </div>
 </div>
 <p>For any <code>RandomAccessible&lt;T&gt;</code> we can get a “block copier” using <code>PrimitiveBlocks.of(...)</code>. As mentioned above, this only works with <code>NativeType</code> that map 1:1 to primitives.</p>
@@ -411,8 +413,8 @@ CopyBenchmarkViewPrimitiveBlocks.benchmarkPrimitiveBlocks  false      false  avg
 <span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="bu">Arrays</span><span class="op">.</span><span class="fu">toString</span><span class="op">(</span>array<span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
-<pre><code>The RandomAccessible net.imglib2.position.FunctionRandomAccessible@40c61e2c is only be supported through the fall-back implementation of PrimitiveBlocks. 
-Cannot analyze view net.imglib2.position.FunctionRandomAccessible@40c61e2c of class FunctionRandomAccessible</code></pre>
+<pre><code>The RandomAccessible net.imglib2.position.FunctionRandomAccessible@6e4e6a73 is only be supported through the fall-back implementation of PrimitiveBlocks. 
+Cannot analyze view net.imglib2.position.FunctionRandomAccessible@6e4e6a73 of class FunctionRandomAccessible</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <pre><code>[1, 2, 3, 4, 2, 4, 6, 8, 3, 6, 9, 12, 4, 8, 12, 16]</code></pre>
@@ -495,7 +497,7 @@ source interval = [(400, 200) -- (527, 327) = 128x128]</code></pre>
 </div>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="14">
-<pre><code>c5e01808-e56c-4fed-9a54-820ece724509</code></pre>
+<pre><code>5858c8c3-5e67-431f-9c81-a9c59d335974</code></pre>
 </div>
 </div>
 <p>As you can imagine, it is straightforward to chain <code>BlockProcessor</code>s, sending the target interval backwards through the chain, and the source data forwards via approriate temporary intermediate arrays. In fact, our <code>BlockProcessor</code> is already such a concatenation (convert <code>byte[]</code> to <code>float[]</code>, downsample <code>float[]</code> to <code>float[]</code>, convert <code>float[]</code> to <code>byte[]</code>).</p>
@@ -593,7 +595,7 @@ op.targetType          = UnsignedByteType</code></pre>
 </div>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="21">
-<pre><code>c28d1b14-3eaf-40a5-98a0-e8760f1e1325</code></pre>
+<pre><code>f37d4e03-cfa7-4716-8af5-cc44b5682821</code></pre>
 </div>
 </div>
 </section>
@@ -613,7 +615,7 @@ op.targetType          = UnsignedByteType</code></pre>
 </div>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="22">
-<pre><code>d7fd6759-4ba4-46ee-8384-c99a12fe49ce</code></pre>
+<pre><code>8ea39058-2206-4aca-a995-7779e2925ad7</code></pre>
 </div>
 </div>
 </section>
@@ -636,7 +638,7 @@ op.targetType          = UnsignedByteType</code></pre>
 </div>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="23">
-<pre><code>85a843b1-7cbd-472f-9742-596de496f4ef</code></pre>
+<pre><code>4ff02cba-3d98-47a9-b848-a8bbd1a0c774</code></pre>
 </div>
 </div>
 </section>
@@ -691,7 +693,7 @@ op.targetType          = UnsignedByteType</code></pre>
 </section>
 <section id="influence-of-tiling-on-memory-and-performance" class="level4">
 <h4 class="anchored" data-anchor-id="influence-of-tiling-on-memory-and-performance">Influence of tiling on memory and performance</h4>
-<div id="7e67a123-c281-46ef-b95a-759d44342540" class="cell" data-execution_count="41">
+<div id="7e67a123-c281-46ef-b95a-759d44342540" class="cell" data-execution_count="26">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">realtransform</span><span class="op">.</span><span class="im">AffineTransform3D</span><span class="op">;</span></span>
@@ -722,7 +724,7 @@ op.targetType          = UnsignedByteType</code></pre>
 </div>
 </div>
 <p>What is a good tile size? Not too small, not too big… <br> Let’s look at performance. Play around a bit with which operations to chain.</p>
-<div id="7bfae16b-5d22-487e-9341-26ae2627476d" class="cell" data-execution_count="47">
+<div id="7bfae16b-5d22-487e-9341-26ae2627476d" class="cell" data-execution_count="27">
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">static</span> <span class="dt">long</span> <span class="fu">timeIt</span><span class="op">(</span><span class="dt">int</span> numIterations<span class="op">,</span> <span class="bu">Runnable</span> r<span class="op">)</span> <span class="op">{</span></span>
@@ -752,20 +754,20 @@ op.targetType          = UnsignedByteType</code></pre>
 <span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>tile size = 4: 88 ms
-tile size = 8: 77 ms
-tile size = 16: 108 ms
+<pre><code>tile size = 4: 123 ms
+tile size = 8: 98 ms
+tile size = 16: 111 ms
 tile size = 32: 167 ms
 
-tile size = 4: 86 ms
-tile size = 8: 77 ms
-tile size = 16: 108 ms
-tile size = 32: 166 ms
+tile size = 4: 117 ms
+tile size = 8: 102 ms
+tile size = 16: 109 ms
+tile size = 32: 174 ms
 
-tile size = 4: 85 ms
-tile size = 8: 78 ms
-tile size = 16: 111 ms
-tile size = 32: 170 ms
+tile size = 4: 123 ms
+tile size = 8: 95 ms
+tile size = 16: 125 ms
+tile size = 32: 180 ms
 </code></pre>
 </div>
 </div>

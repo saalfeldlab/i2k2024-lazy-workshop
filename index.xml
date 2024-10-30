@@ -97,9 +97,9 @@
 <item>
   <title>Procedurally generated image</title>
   <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-lazy-imglib2/juliaset.html</link>
-  <description><![CDATA[ continuous (defined at every real coordinate) and unbounded. ]]></description>
+  <description><![CDATA[ We define the Juliaset as a function in 2D real space using a <a href="https://cr.openjdk.org/~jlaskey/templates/docs/api/java.base/java/util/function/BiConsumer.html">BiConsumer</a> lambda function. The BiConsumer receives two parameters, the first one (x) is the 2D coordinate, the second one (fx) is the target of the function whose value will be set in place, here we use an <code>UnsignedByteType</code>. We also have to provide a <a href="https://cr.openjdk.org/~jlaskey/templates/docs/api/java.base/java/util/function/Supplier.html">Supplier</a> for instances of the target such that multiple threads can each create their own. ]]></description>
   <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-lazy-imglib2/juliaset.html</guid>
-  <pubDate>Fri, 25 Oct 2024 00:54:32 GMT</pubDate>
+  <pubDate>Wed, 30 Oct 2024 20:22:26 GMT</pubDate>
 </item>
 </channel>
 </rss>
