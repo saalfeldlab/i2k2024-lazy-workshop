@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Stephan Saalfeld">
+<meta name="author" content="Stephan Saalfeld, Tobias Pietzsch">
 <meta name="dcterms.date" content="2024-10-17">
 <meta name="description" content="… very, very lazy, like … everywhere!">
 
@@ -182,7 +182,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Author</div>
       <div class="quarto-title-meta-contents">
-               <p>Stephan Saalfeld </p>
+               <p>Stephan Saalfeld, Tobias Pietzsch </p>
             </div>
     </div>
       
@@ -214,24 +214,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <details open="" class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>mavenRepo scijava<span class="op">.</span><span class="fu">public</span> https<span class="op">:</span><span class="co">//maven.scijava.org/content/groups/public</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven org<span class="op">.</span><span class="fu">scijava</span><span class="op">:</span>scijava<span class="op">-</span>common<span class="op">:</span><span class="fl">2.99.0</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">:</span><span class="fl">7.1.2</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">-</span>realtransform<span class="op">:</span><span class="fl">4.0.3</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">-</span>ij<span class="op">:</span><span class="fl">2.0.3</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">//%maven jitk:jitk-tps:3.0.4</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">:</span><span class="fl">7.1.2</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">-</span>realtransform<span class="op">:</span><span class="fl">4.0.3</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven net<span class="op">.</span><span class="fu">imglib2</span><span class="op">:</span>imglib2<span class="op">-</span>ij<span class="op">:</span><span class="fl">2.0.3</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven org<span class="op">.</span><span class="fu">scijava</span><span class="op">:</span>scijava<span class="op">-</span>common<span class="op">:</span><span class="fl">2.99.0</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>maven sc<span class="op">.</span><span class="fu">fiji</span><span class="op">:</span>bigdataviewer<span class="op">-</span>core<span class="op">:</span><span class="fl">10.6.2</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">//%mavenRepo scijava.public https://maven.scijava.org/content/groups/public</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">//%maven org.janelia.saalfeldlab:n5-ij:4.2.5</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">//%maven jitk:jitk-tps:3.0.4</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">//%maven net.imglib2:imglib2-realtransform:4.0.3</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">ij</span><span class="op">.*;</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">io</span><span class="op">.</span><span class="im">github</span><span class="op">.</span><span class="im">spencerpark</span><span class="op">.</span><span class="im">jupyter</span><span class="op">.</span><span class="im">kernel</span><span class="op">.</span><span class="im">display</span><span class="op">.</span><span class="im">common</span><span class="op">.*;</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">io</span><span class="op">.</span><span class="im">github</span><span class="op">.</span><span class="im">spencerpark</span><span class="op">.</span><span class="im">jupyter</span><span class="op">.</span><span class="im">kernel</span><span class="op">.</span><span class="im">display</span><span class="op">.</span><span class="im">mime</span><span class="op">.*;</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.*;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">bdv</span><span class="op">.</span><span class="im">util</span><span class="op">.*;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">bdv</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">volatiles</span><span class="op">.*;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">bdv</span><span class="op">.</span><span class="im">viewer</span><span class="op">.*;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">ij</span><span class="op">.*;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">io</span><span class="op">.</span><span class="im">github</span><span class="op">.</span><span class="im">spencerpark</span><span class="op">.</span><span class="im">jupyter</span><span class="op">.</span><span class="im">kernel</span><span class="op">.</span><span class="im">display</span><span class="op">.</span><span class="im">common</span><span class="op">.*;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">io</span><span class="op">.</span><span class="im">github</span><span class="op">.</span><span class="im">spencerpark</span><span class="op">.</span><span class="im">jupyter</span><span class="op">.</span><span class="im">kernel</span><span class="op">.</span><span class="im">display</span><span class="op">.</span><span class="im">mime</span><span class="op">.*;</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.*;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">algorithm</span><span class="op">.</span><span class="im">gauss3</span><span class="op">.*;</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">cache</span><span class="op">.</span><span class="im">img</span><span class="op">.*;</span></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">img</span><span class="op">.</span><span class="im">imageplus</span><span class="op">.*;</span></span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">img</span><span class="op">.</span><span class="im">display</span><span class="op">.</span><span class="im">imagej</span><span class="op">.*;</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">view</span><span class="op">.*;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">loops</span><span class="op">.*;</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">parallel</span><span class="op">.*;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">position</span><span class="op">.*;</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">realtransform</span><span class="op">.*;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">type</span><span class="op">.</span><span class="im">numeric</span><span class="op">.*;</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">type</span><span class="op">.</span><span class="im">numeric</span><span class="op">.</span><span class="im">integer</span><span class="op">.*;</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">util</span><span class="op">.*;</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">view</span><span class="op">.*;</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">static</span><span class="im"> net</span><span class="op">.</span><span class="im">imglib2</span><span class="op">.</span><span class="im">view</span><span class="op">.</span><span class="im">fluent</span><span class="op">.</span><span class="im">RandomAccessibleIntervalView</span><span class="op">.</span><span class="im">Extension</span><span class="op">.*;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Let’s open one of ImageJ’s example images and show it in the notebook. This uses <a href="https://github.com/SpencerPark/jupyter-jvm-basekernel/blob/master/src/main/java/io/github/spencerpark/jupyter/kernel/display/common/Image.java">Spencer Park’s image renderer</a>:</p>
@@ -305,7 +313,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>IntImagePlus [320x200]</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="5">
-<pre><code>c31f118d-84df-431a-8427-9071cf7bbfc2</code></pre>
+<pre><code>bbfdd514-2046-4a90-8f91-70f50e2afa28</code></pre>
 </div>
 </div>
 <p>Ok, great! Let’s try the ‘infinite’ version:</p>
@@ -336,7 +344,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>IntImagePlus [320x200]</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<pre><code>net.imglib2.view.ExtendedRandomAccessibleInterval@6f43168e</code></pre>
+<pre><code>net.imglib2.view.ExtendedRandomAccessibleInterval@26003768</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <div>
@@ -346,10 +354,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="cell-output cell-output-display">
-<pre><code>net.imglib2.view.ExtendedRandomAccessibleInterval@6f43168e</code></pre>
+<pre><code>net.imglib2.view.ExtendedRandomAccessibleInterval@26003768</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="7">
-<pre><code>8e85d9d6-45bc-45ec-998d-e997df357b33</code></pre>
+<pre><code>dcf18908-52e5-4fa3-9254-5ccaa48fc4e6</code></pre>
 </div>
 </div>
 <p>You may have noticed that the output of this cell ends with an obscure identifier. We see this, because we did not catch the output of the <code>display</code> method which provides an identifier for the output object that it generates. This identifier can be used to update the contents of this object. We can use this to render simple animations, e.g.&nbsp;to slice through a 3D volume. Let’s try this with a 3D volume from the ImageJ example images:</p>
@@ -450,7 +458,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>grey to red-cyan ramp</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="9">
-<pre><code>9c8f0b27-8430-4370-b18b-c180f5776523</code></pre>
+<pre><code>9cfd8948-83a2-462d-836e-72892d3dcd03</code></pre>
 </div>
 </div>
 <p>And now some integer coordinate transformations:</p>
@@ -510,7 +518,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <pre><code>extend periodically, shear axis 1 into axis 0, subsample by (3, 1)</code></pre>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="10">
-<pre><code>79980aa0-b459-45f1-b110-5c124e6b8af0</code></pre>
+<pre><code>13ce9c52-c37e-4d0e-9baf-30619d963815</code></pre>
 </div>
 </div>
 <p>While most trivial integer transformations such as flipping axes work on intervals, you probably noticed that we had to extend the image to infinity in order to shear it, so ImgLib2 can provide values for coordinates outside of the source interval. For real coordinate transformations we will also need to interpolate values at non-integer coordinates. Finally, in order to render the result, we have to read it from a raster. Let’s do this:</p>
@@ -709,8 +717,122 @@ SLF4J: Defaulting to no-operation (NOP) logger implementation
 SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.</code></pre>
 </div>
 </div>
+<section id="procedurally-generated-image" class="level2">
+<h2 class="anchored" data-anchor-id="procedurally-generated-image">Procedurally generated image</h2>
+<p>We define the Juliaset as a function in 2D real space using a <a href="https://cr.openjdk.org/~jlaskey/templates/docs/api/java.base/java/util/function/BiConsumer.html">BiConsumer</a> lambda function. The BiConsumer receives two parameters, the first one (x) is the 2D coordinate, the second one (fx) is the target of the function whose value will be set in place, here we use an <code>UnsignedByteType</code>. We also have to provide a <a href="https://cr.openjdk.org/~jlaskey/templates/docs/api/java.base/java/util/function/Supplier.html">Supplier</a> for instances of the target such that multiple threads can each create their own.</p>
+<p>The result is a function over continuous coordinates that is unbounded.</p>
+<div id="cc4ad571" class="cell" data-execution_count="13">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> juliaset <span class="op">=</span> <span class="kw">new</span> FunctionRealRandomAccessible<span class="op">&lt;</span>UnsignedByteType<span class="op">&gt;(</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span><span class="op">,</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">(</span>x<span class="op">,</span> fx<span class="op">)</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">double</span> v <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">double</span> c <span class="op">=</span> x<span class="op">.</span><span class="fu">getDoublePosition</span><span class="op">(</span><span class="dv">0</span><span class="op">);</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">double</span> d <span class="op">=</span> x<span class="op">.</span><span class="fu">getDoublePosition</span><span class="op">(</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> <span class="op">(;</span> i <span class="op">&lt;</span> <span class="dv">255</span> <span class="op">&amp;&amp;</span> v <span class="op">&lt;</span> <span class="dv">4096</span><span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">final</span> <span class="dt">double</span> e <span class="op">=</span> c <span class="op">*</span> c <span class="op">-</span> d <span class="op">*</span> d<span class="op">;</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>        d <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> c <span class="op">*</span> d<span class="op">;</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>        c <span class="op">=</span> e <span class="op">+</span> <span class="fl">0.3</span><span class="op">;</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>        d <span class="op">+=</span> <span class="fl">0.6</span><span class="op">;</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>        v <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">sqrt</span><span class="op">(</span>c <span class="op">*</span> c <span class="op">+</span> d <span class="op">*</span> d<span class="op">);</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">++</span>i<span class="op">;</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>      <span class="op">}</span></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>      fx<span class="op">.</span><span class="fu">set</span><span class="op">(</span>i<span class="op">);</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">},</span></span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>    UnsignedByteType<span class="op">::</span><span class="kw">new</span><span class="op">);</span></span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>BdvSource bdv <span class="op">=</span> BdvFunctions<span class="op">.</span><span class="fu">show</span><span class="op">(</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>    juliaset<span class="op">,</span></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>    Intervals<span class="op">.</span><span class="fu">createMinMax</span><span class="op">(-</span><span class="dv">1</span><span class="op">,</span> <span class="op">-</span><span class="dv">1</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">1</span><span class="op">),</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"juliaset"</span><span class="op">,</span></span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>    Bdv<span class="op">.</span><span class="fu">options</span><span class="op">().</span><span class="fu">is2D</span><span class="op">());</span></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>bdv<span class="op">.</span><span class="fu">setDisplayRange</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">127</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="caching-results-of-expensive-operations" class="level2">
+<h2 class="anchored" data-anchor-id="caching-results-of-expensive-operations">Caching results of expensive operations</h2>
+<p>Trying to show benefits of caching with very contrived example…</p>
+<p>Use the <code>juliaset</code> from above. To have something that can be put in a cache, we rasterize (virtually)</p>
+<div id="11182e2a" class="cell" data-execution_count="14">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> transform <span class="op">=</span> <span class="kw">new</span> <span class="fu">AffineTransform2D</span><span class="op">();</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>transform<span class="op">.</span><span class="fu">set</span><span class="op">(</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">4000</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">8000</span><span class="op">,</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="dv">0</span><span class="op">,</span> <span class="dv">4000</span><span class="op">,</span> <span class="dv">8000</span><span class="op">);</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> affine <span class="op">=</span> RealViews<span class="op">.</span><span class="fu">affine</span><span class="op">(</span>juliaset<span class="op">,</span> transform<span class="op">);</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> transformed <span class="op">=</span> affine</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">view</span><span class="op">()</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">interval</span><span class="op">(</span>Intervals<span class="op">.</span><span class="fu">createMinSize</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">16000</span><span class="op">,</span> <span class="dv">16000</span><span class="op">))</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">convert</span><span class="op">(</span>UnsignedByteType<span class="op">::</span><span class="kw">new</span><span class="op">,</span> <span class="op">(</span>i<span class="op">,</span> o<span class="op">)</span> <span class="op">-&gt;</span> o<span class="op">.</span><span class="fu">set</span><span class="op">(</span><span class="bu">Math</span><span class="op">.</span><span class="fu">min</span><span class="op">(</span>i<span class="op">.</span><span class="fu">get</span><span class="op">()</span> <span class="op">*</span> <span class="dv">3</span><span class="op">,</span> <span class="dv">255</span><span class="op">)));</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> bdv <span class="op">=</span> BdvFunctions<span class="op">.</span><span class="fu">show</span><span class="op">(</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>    transformed<span class="op">,</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"transformed and rasterized"</span><span class="op">,</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>    Bdv<span class="op">.</span><span class="fu">options</span><span class="op">().</span><span class="fu">is2D</span><span class="op">());</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>bdv<span class="op">.</span><span class="fu">getBdvHandle</span><span class="op">().</span><span class="fu">getViewerPanel</span><span class="op">().</span><span class="fu">setDisplayMode</span><span class="op">(</span><span class="bu">DisplayMode</span><span class="op">.</span><span class="fu">SINGLE</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>It is relatively expensive (not really, but use your imagination) to compute the value of a pixel in <code>transformed</code>. And the value is re-computed everytime it is accessed.</p>
+<p>To avoid that, we can wrap it into a <code>CachedCellImg</code>. Pixel values are computed once and cached for subsequent accesses.</p>
+<p>The <code>CachedCellImg</code> pre-computes whole blocks of data when a single pixel from the block is accessed. This is often what you want, but you should be aware of it.</p>
+<p>To make things more interesting for the next experiment, we use arbitrary prime numbers for cell sizes.</p>
+<div id="bbd8eb45" class="cell" data-execution_count="15">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> cached <span class="op">=</span> <span class="kw">new</span> <span class="fu">ReadOnlyCachedCellImgFactory</span><span class="op">().</span><span class="fu">create</span><span class="op">(</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    transformed<span class="op">.</span><span class="fu">dimensionsAsLongArray</span><span class="op">(),</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="fu">UnsignedByteType</span><span class="op">(),</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    cell <span class="op">-&gt;</span> LoopBuilder<span class="op">.</span><span class="fu">setImages</span><span class="op">(</span>transformed<span class="op">.</span><span class="fu">view</span><span class="op">().</span><span class="fu">interval</span><span class="op">(</span>cell<span class="op">),</span> cell<span class="op">).</span><span class="fu">forEachPixel</span><span class="op">((</span>i<span class="op">,</span> o<span class="op">)</span> <span class="op">-&gt;</span> o<span class="op">.</span><span class="fu">set</span><span class="op">(</span>i<span class="op">)),</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    ReadOnlyCachedCellImgOptions<span class="op">.</span><span class="fu">options</span><span class="op">().</span><span class="fu">cellDimensions</span><span class="op">(</span><span class="dv">359</span><span class="op">));</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>BdvFunctions<span class="op">.</span><span class="fu">show</span><span class="op">(</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    VolatileViews<span class="op">.</span><span class="fu">wrapAsVolatile</span><span class="op">(</span>cached<span class="op">),</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cached"</span><span class="op">,</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    Bdv<span class="op">.</span><span class="fu">options</span><span class="op">().</span><span class="fu">addTo</span><span class="op">(</span>bdv<span class="op">));</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>bdv.util.BdvStackSource@3102ff8e</code></pre>
+</div>
+</div>
+<p>We define two additional <code>CachedCellImg</code>s: one that generates data by smoothing the procedural image, one that generates data by smoothing the cached image.</p>
+<p>Since we use arbitrary prime numbers for cell sizes, the operation on the original image starts immediately, and the operation on the cached image requires that the cached source cells are being generated. We run everything in a single thread, so you see some interesting processing patterns.</p>
+<p>To start the show, you have to switch to fused mode which shows all sources that we added to BigDataViewer.</p>
+<div id="d9c5601e" class="cell" data-execution_count="16">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> convolved <span class="op">=</span> <span class="kw">new</span> <span class="fu">ReadOnlyCachedCellImgFactory</span><span class="op">().</span><span class="fu">create</span><span class="op">(</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    transformed<span class="op">.</span><span class="fu">dimensionsAsLongArray</span><span class="op">(),</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="fu">UnsignedByteType</span><span class="op">(),</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    cell <span class="op">-&gt;</span> Parallelization<span class="op">.</span><span class="fu">runSingleThreaded</span><span class="op">(()</span> <span class="op">-&gt;</span> Gauss3<span class="op">.</span><span class="fu">gauss</span><span class="op">(</span><span class="kw">new</span> <span class="dt">double</span><span class="op">[]{</span><span class="dv">8</span><span class="op">,</span> <span class="dv">8</span><span class="op">},</span> transformed<span class="op">,</span> cell<span class="op">)),</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    ReadOnlyCachedCellImgOptions<span class="op">.</span><span class="fu">options</span><span class="op">().</span><span class="fu">cellDimensions</span><span class="op">(</span><span class="dv">523</span><span class="op">));</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> source <span class="op">=</span> BdvFunctions<span class="op">.</span><span class="fu">show</span><span class="op">(</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    VolatileViews<span class="op">.</span><span class="fu">wrapAsVolatile</span><span class="op">(</span>convolved<span class="op">),</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"convolved"</span><span class="op">,</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>    Bdv<span class="op">.</span><span class="fu">options</span><span class="op">().</span><span class="fu">addTo</span><span class="op">(</span>bdv<span class="op">));</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>source<span class="op">.</span><span class="fu">setColor</span><span class="op">(</span><span class="kw">new</span> <span class="fu">ARGBType</span><span class="op">(</span><span class="bn">0xff00ff</span><span class="op">));</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> cachedConvolved <span class="op">=</span> <span class="kw">new</span> <span class="fu">ReadOnlyCachedCellImgFactory</span><span class="op">().</span><span class="fu">create</span><span class="op">(</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>    transformed<span class="op">.</span><span class="fu">dimensionsAsLongArray</span><span class="op">(),</span></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="fu">UnsignedByteType</span><span class="op">(),</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>    cell <span class="op">-&gt;</span> Parallelization<span class="op">.</span><span class="fu">runSingleThreaded</span><span class="op">(()</span> <span class="op">-&gt;</span> Gauss3<span class="op">.</span><span class="fu">gauss</span><span class="op">(</span><span class="kw">new</span> <span class="dt">double</span><span class="op">[]{</span><span class="dv">8</span><span class="op">,</span> <span class="dv">8</span><span class="op">},</span> cached<span class="op">.</span><span class="fu">view</span><span class="op">().</span><span class="fu">extend</span><span class="op">(</span><span class="fu">mirrorDouble</span><span class="op">()),</span> cell<span class="op">)),</span></span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a>    ReadOnlyCachedCellImgOptions<span class="op">.</span><span class="fu">options</span><span class="op">().</span><span class="fu">cellDimensions</span><span class="op">(</span><span class="dv">523</span><span class="op">));</span></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> source <span class="op">=</span> BdvFunctions<span class="op">.</span><span class="fu">show</span><span class="op">(</span></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>    VolatileViews<span class="op">.</span><span class="fu">wrapAsVolatile</span><span class="op">(</span>cachedConvolved<span class="op">),</span></span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"cached convolved"</span><span class="op">,</span></span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>    Bdv<span class="op">.</span><span class="fu">options</span><span class="op">().</span><span class="fu">addTo</span><span class="op">(</span>bdv<span class="op">));</span></span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a>source<span class="op">.</span><span class="fu">setColor</span><span class="op">(</span><span class="kw">new</span> <span class="fu">ARGBType</span><span class="op">(</span><span class="bn">0x00ff00</span><span class="op">));</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

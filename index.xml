@@ -72,7 +72,7 @@
 </item>
 <item>
   <title>ImgLib2 is lazy</title>
-  <dc:creator>Stephan Saalfeld</dc:creator>
+  <dc:creator>Stephan Saalfeld, Tobias Pietzsch</dc:creator>
   <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-lazy-imglib2/02-lazy-imglib2.html</link>
   <description><![CDATA[ … very, very lazy, like … everywhere! ]]></description>
   <category>imglib2</category>
@@ -93,13 +93,6 @@
   <category>quarto</category>
   <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/01-setup.html</guid>
   <pubDate>Thu, 17 Oct 2024 05:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Procedurally generated image</title>
-  <link>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-lazy-imglib2/juliaset.html</link>
-  <description><![CDATA[ We define the Juliaset as a function in 2D real space using a <a href="https://cr.openjdk.org/~jlaskey/templates/docs/api/java.base/java/util/function/BiConsumer.html">BiConsumer</a> lambda function. The BiConsumer receives two parameters, the first one (x) is the 2D coordinate, the second one (fx) is the target of the function whose value will be set in place, here we use an <code>UnsignedByteType</code>. We also have to provide a <a href="https://cr.openjdk.org/~jlaskey/templates/docs/api/java.base/java/util/function/Supplier.html">Supplier</a> for instances of the target such that multiple threads can each create their own. ]]></description>
-  <guid>https://saalfeldlab.github.io/i2k2024-lazy-workshop/posts/02-lazy-imglib2/juliaset.html</guid>
-  <pubDate>Wed, 30 Oct 2024 20:22:26 GMT</pubDate>
 </item>
 </channel>
 </rss>
